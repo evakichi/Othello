@@ -250,16 +250,6 @@ class Board:
         else:
             print("Err!!")
 
-
-board = Board()
-board.print()
-color = board.white
-while not board.getEmpty(board.black) == None or not board.getEmpty(board.white) == None: 
-    color = board.reverse(color)
-    li = board.getEmpty(color)
-    board.printEmptyList(color)
-    if not li == None:
-        rand = random.randint(0,len(li)-1)
-        x,y = li[rand]
-        board.put(x,y,color)
-
+    def isGameOver(self):
+      return not self.getEmpty(self.black) == None or not self.getEmpty(self.white) == None
+      
