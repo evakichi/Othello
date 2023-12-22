@@ -161,7 +161,8 @@ class Board:
         else:
             print (f'●:put{x},{y}')
 
-    def put(self,x,y,color):
+    def put(self,pos,color):
+        x,y = pos
         if self.isAvailable(x,y,color):
             self.board[x][y] = color
 #            self.printRecord(x,y,color)
