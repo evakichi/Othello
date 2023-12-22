@@ -209,75 +209,74 @@ class Board:
             flag = False
             for xi in range(x + 1,8):
                 for yi in range(y + 1,8):
-                    if xi - x == yi - y and self.get(xi,yi) == self.reverse(color):
-                        continue
-                    elif xi - x == yi - y and self.get(xi,yi) == color:
-                        flag = True
-                        for xii in range(x+1,xi):
-                            for yii in range(y+1,yi):
-                                if xii - x == yii - y:
-                                    self.board[xii][yii]=color
-                        break
-                    else:
-                        flag = True
-                        break
+                    if xi - x == yi -y:
+                        if self.get(xi,yi) == self.reverse(color):
+                            continue
+                        else:
+                            if self.get(xi,yi) == color:
+                                flag = True
+                                break
                 if flag:
                     break
+            if flag:
+                for xii in range(x,xi):
+                    for yii in range(y,yi):
+                        if xii - xi == yii -yi:
+                            self.board[xii][yii] = color                    
+
+            flag = False
+            for xi in range(x + 1, 8):
+                for yi in range(y - 1,-1,-1):
+                    if x - xi == yi - y:
+                        if self.get(xi,yi) == self.reverse(color):
+                            continue
+                        elif self.get(xi,yi) == color:
+                            flag = True
+                            break
+                if flag:
+                    break
+            if flag:
+                for xii in range(x + 1,8,-1):
+                    for yii in range(y - 1,yi -1,-1):
+                        if xii - xi == yi - yii:
+                            self.board[xii][yii] = color
+                    
 
             flag = False
             for xi in range(x - 1,-1,-1):
                 for yi in range(y - 1,-1,-1):
-                    if x - xi == y - yi and self.get(xi,yi) == self.reverse(color):
-                        continue
-                    elif x - xi == y - yi and self.get(xi,yi) == color:
-                        flag = True
-                        for xii in range(x - 1 ,xi - 1,-1):
-                            for yii in range( y - 1,yi - 1,-1):
-                                if x - xii == y - yii:
-                                    self.board[xii][yii]=color
-                        break
-                    else:
-                        flag = True
-                        break
+                    if x - xi == y - yi:
+                        if self.get(xi,yi) == self.reverse(color):
+                            continue
+                        elif self.get(xi,yi) == color:
+                            flag = True
+                            break
                 if flag:
                     break
+            if flag:
+                for xii in range(x - 1,xi -1,-1):
+                    for yii in range(y - 1,yi -1,-1):
+                        if xi - xii == yi - yii:
+                            self.board[xii][yii] = color
+                    
 
             flag = False
             for xi in range(x - 1,-1,-1):
-                for yi in range(y + 1,8):
-                    if x - xi == yi - y and self.get(xi,yi) == self.reverse(color):
-                        continue
-                    elif x - xi == yi - y and self.get(xi,yi) == color:
-                        flag = True
-                        for xii in range(x - 1,xi - 1,-1):
-                            for yii in range(y + 1,yi):
-                                if x - xii == yii - y:
-                                    self.board[xii][yii]=color
-                        break
-                    else:
-                        flag = True
-                        break
+                for yi in range(y,8):
+                    if x - xi == yi - y:
+                        if self.get(xi,yi) == self.reverse(color):
+                            continue
+                        elif self.get(xi,yi) == color:
+                            flag = True
+                            break
                 if flag:
                     break
-
-            flag = False
-            for xi in range(x+1,8):
-                for yi in range(y - 1,-1,-1):
-                    if xi - x == y - yi and self.get(xi,yi) == self.reverse(color):
-                        continue
-                    elif xi - x == y - yi and self.get(xi,yi) == color:
-                        flag = True
-                        for xii in range(x + 1 ,xi):
-                            for yii in range( y - 1,yi - 1,-1):
-                                if xii - x == y - yii:
-                                    self.board[xii][yii]=color
-                        break
-                    else:
-                        flag = True
-                        break
-                if flag:
-                    break
-
+            if flag:
+                for xii in range(x - 1,xi -1,-1):
+                    for yii in range(y,yi):
+                        if xi - xii == yii - yi:
+                            self.board[xii][yii] = color
+                    
 #            self.printBoard()
         else:
             print("Err!!")

@@ -10,7 +10,7 @@ whitePoints = points.Points()
 counter = 1000000
 pointPlayers = pointPlayer.pointPlayer()
 
-counter = 10000
+counter = 1
 blackWin = 0
 draw = 0
 whiteWin = 0
@@ -20,28 +20,43 @@ for count in range(0,counter):
     #MainBoard.print()
     color = MainBoard.white
     record = recorder.Recorder()
+    MainBoard.printBoard()
     while MainBoard.isGameOver(): 
         color = MainBoard.reverse(color)
+        print(board.Board.getColorString(color))
         if color == MainBoard.black:
             li = MainBoard.getEmpty(color)
+#            if not li == None:
+#                for i,l in enumerate(li):
+#                    if i == 0:
+#                        maxPosition = l
+#                        maxPoint = pointPlayers.getPoint(maxPosition,color)
+#                    elif maxPoint <= pointPlayers.getPoint(l,color):
+#                        maxPoint = pointPlayers.getPoint(l,color)
+#                        maxPosition=l
+    #        MainBoard.printEmptyList(color)
             if not li == None:
-                for i,l in enumerate(li):
-                    if i == 0:
-                        maxPosition = l
-                        maxPoint = pointPlayers.getPoint(maxPosition,color)
-                    elif maxPoint <= pointPlayers.getPoint(l,color):
-                        maxPoint = pointPlayers.getPoint(l,color)
-                        maxPosition=l
-                MainBoard.put(maxPosition,color)
-                record.record(maxPosition,color)                
+                x = int(input('x:'))
+                y = int(input('y:'))
+                while not MainBoard.isAvailable(x,y,color):
+                    print ('Err')
+                    x = int(input('x:'))
+                    y = int(input('y:'))
+                MainBoard.put((x,y),color)
+                record.record((x,y),color)                
         else:    
             li = MainBoard.getEmpty(color)
     #        MainBoard.printEmptyList(color)
             if not li == None:
-                rand = random.randint(0,len(li)-1)
-                l = li[rand]
-                MainBoard.put(l,color)
-                record.record(l,color)
+                x = int(input('x:'))
+                y = int(input('y:'))
+                while not MainBoard.isAvailable(x,y,color):
+                    print ('Err')
+                    x = int(input('x:'))
+                    y = int(input('y:'))
+                MainBoard.put((x,y),color)
+                record.record((x,y),color)
+        MainBoard.printBoard()
 
     black,white =MainBoard.result()
     if black < white:
