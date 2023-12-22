@@ -13,3 +13,15 @@ class pointPlayer:
             return self.blackPoints[x,y]
         else:
             return self.whitePoints[x,y]
+        
+    def getNext(self,li,color):
+        if not li == None:
+            for i,l in enumerate(li):
+                if i == 0:
+                    maxPosition = l
+                    maxPoint = self.getPoint(maxPosition,color)
+                elif maxPoint <= self.getPoint(l,color):
+                    maxPoint = self.getPoint(l,color)
+                    maxPosition=l
+        return maxPosition
+ 

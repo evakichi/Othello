@@ -236,7 +236,7 @@ class Board:
                 if flag:
                     break
             if flag:
-                for xii in range(x + 1,8,-1):
+                for xii in range(x + 1,xi):
                     for yii in range(y - 1,yi -1,-1):
                         if xii - xi == yi - yii:
                             self.board[xii][yii] = color
@@ -284,7 +284,7 @@ class Board:
     def isGameOver(self):
       return not self.getEmpty(self.black) == None or not self.getEmpty(self.white) == None
     
-    def result(self):
+    def result(self,count):
         white = 0
         black = 0
         for x in range(0,8):
@@ -293,7 +293,7 @@ class Board:
                     black += 1
                 elif self.board[x][y]==self.white:
                     white += 1
-        print (f'black = {black}, white = {white}')
+        print (f'{count}: black = {black}, white = {white}',end="")
         if white == black:
             print ("draw")
         elif white > black:
