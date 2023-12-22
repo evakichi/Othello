@@ -6,21 +6,28 @@ class Board:
     white = 1
     empty = 0
 
-    board = [[ 0, 0, 0, 0, 0, 0, 0, 0],
-             [ 0, 0, 0, 0, 0, 0, 0, 0],
-             [ 0, 0, 0, 0, 0, 0, 0, 0],
-             [ 0, 0, 0, 1,-1, 0, 0, 0],
-             [ 0, 0, 0,-1, 1, 0, 0, 0],
-             [ 0, 0, 0, 0, 0, 0, 0, 0],
-             [ 0, 0, 0, 0, 0, 0, 0, 0],
-             [ 0, 0, 0, 0, 0, 0, 0, 0]]
     def __init__(self) -> None:
-        pass
+        self.board = [[ 0, 0, 0, 0, 0, 0, 0, 0],
+                [ 0, 0, 0, 0, 0, 0, 0, 0],
+                [ 0, 0, 0, 0, 0, 0, 0, 0],
+                [ 0, 0, 0, 1,-1, 0, 0, 0],
+                [ 0, 0, 0,-1, 1, 0, 0, 0],
+                [ 0, 0, 0, 0, 0, 0, 0, 0],
+                [ 0, 0, 0, 0, 0, 0, 0, 0],
+                [ 0, 0, 0, 0, 0, 0, 0, 0]]
 
     def reverse(self,color):
         return -1*color
     
-    def print(self):
+    def getColorString(color):
+        if color == -1:
+            return '○'
+        elif color == 1:
+            return '●'
+        else:
+            return '-'
+
+    def printBoard(self):
         print (" ",end="")
         for j in range(0,8):
             print (f'|{j}',end="")
@@ -147,20 +154,25 @@ class Board:
             for l in li:
                 print (f'{l}')
 
+
+    def printRecord(self,x,y,color):
+        if color == self.black:
+            print (f'○:put{x},{y}')
+        else:
+            print (f'●:put{x},{y}')
+
     def put(self,x,y,color):
         if self.isAvailable(x,y,color):
             self.board[x][y] = color
-            if color == self.black:
-                print (f'○:put{x},{y}')
-            else:
-                print (f'●:put{x},{y}')
-
+#            self.printRecord(x,y,color)
             for i in range(x+1,8):
                 if self.get(i,y) == self.reverse(color):
                     continue
                 elif self.get(i,y) == color:
                     for ii in range(x+1,i):
                         self.board[ii][y]=color
+                    break
+                else:
                     break
 
             for i in range(x-1,-1,-1):
@@ -170,6 +182,8 @@ class Board:
                     for ii in range(x-1,i-1,-1):
                         self.board[ii][y]=color
                     break
+                else:
+                    break
 
             for i in range(y+1,8):
                 if self.get(x,i) == self.reverse(color):
@@ -177,6 +191,8 @@ class Board:
                 elif self.get(x,i) == color:
                     for ii in range(y+1,i):
                         self.board[x][ii]=color
+                    break
+                else:
                     break
 
             for i in range(y-1,-1,-1):
@@ -186,6 +202,9 @@ class Board:
                     for ii in range(y-1,i-1,-1):
                         self.board[x][ii]=color
                     break
+                else:
+                    break
+
             flag = False
             for xi in range(x + 1,8):
                 for yi in range(y + 1,8):
@@ -197,6 +216,9 @@ class Board:
                             for yii in range(y+1,yi):
                                 if xii - x == yii - y:
                                     self.board[xii][yii]=color
+                        break
+                    else:
+                        flag = True
                         break
                 if flag:
                     break
@@ -213,6 +235,9 @@ class Board:
                                 if x - xii == y - yii:
                                     self.board[xii][yii]=color
                         break
+                    else:
+                        flag = True
+                        break
                 if flag:
                     break
 
@@ -227,6 +252,9 @@ class Board:
                             for yii in range(y + 1,yi):
                                 if x - xii == yii - y:
                                     self.board[xii][yii]=color
+                        break
+                    else:
+                        flag = True
                         break
                 if flag:
                     break
@@ -243,13 +271,33 @@ class Board:
                                 if xii - x == y - yii:
                                     self.board[xii][yii]=color
                         break
+                    else:
+                        flag = True
+                        break
                 if flag:
                     break
 
-            self.print()
+#            self.printBoard()
         else:
             print("Err!!")
 
     def isGameOver(self):
       return not self.getEmpty(self.black) == None or not self.getEmpty(self.white) == None
-      
+    
+    def result(self):
+        white = 0
+        black = 0
+        for x in range(0,8):
+            for y in range(0,8):
+                if self.board[x][y]==self.black:
+                    black += 1
+                elif self.board[x][y]==self.white:
+                    white += 1
+        print (f'black = {black}, white = {white}')
+        if white == black:
+            print ("draw")
+        elif white > black:
+            print ("white win")
+        else:
+            print ("black win")
+        return black,white
