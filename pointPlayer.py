@@ -1,20 +1,22 @@
 import board
+import points
 import numpy as np
+
 
 class pointPlayer:
 
     def __init__(self) -> None:
-        self.blackPoints = np.load("/home/evakichi/othellodata/1000000_black.dat.npy")
-        self.whitePoints = np.load("/home/evakichi/othellodata/1000000_white.dat.npy")
+        self.points=points.Points()
+    
+    def load(self,prefix,suffix):
+        self.points.load(prefix,suffix)
 
     def getPoint(self,position,color):
         x,y = position
-        if color == board.Board.black:
-            return self.blackPoints[x,y]
-        else:
-            return self.whitePoints[x,y]
+        return self.points.getPoint(x,y,color)
         
-    def getNext(self,li,color):
+    def getNext(self,currentBoard,color):
+        li = currentBoard.getNextCandidate(color)
         if not li == None:
             for i,l in enumerate(li):
                 if i == 0:

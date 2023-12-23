@@ -138,7 +138,7 @@ class Board:
 
         return False
 
-    def getEmpty(self,color):
+    def getNextCandidate(self,color):
         l = list()
         for x in range(0,8):
             for y in range(0,8):
@@ -149,7 +149,7 @@ class Board:
         return l
             
     def printEmptyList(self,color):
-        li = self.getEmpty(color)
+        li = self.getNextCandidate(color)
         if not li == None:
             for l in li:
                 print (f'{l}')
@@ -206,83 +206,56 @@ class Board:
                 else:
                     break
 
-            flag = False
-            for xi in range(x + 1,8):
-                for yi in range(y + 1,8):
-                    if xi - x == yi -y:
-                        if self.get(xi,yi) == self.reverse(color):
-                            continue
-                        else:
-                            if self.get(xi,yi) == color:
-                                flag = True
-                                break
-                if flag:
+            minValue = min(8 - x, 8 - y)
+            for i in range(1,minValue):
+                if self.get(x + i,y + i) == self.reverse(color):
+                    continue
+                elif self.get(x + i,y + i) == color:
+                    for ii in range(1, i):
+                        self.board[x + ii][y + ii]=color
+                        break
+                else:
                     break
-            if flag:
-                for xii in range(x,xi):
-                    for yii in range(y,yi):
-                        if xii - xi == yii -yi:
-                            self.board[xii][yii] = color                    
 
-            flag = False
-            for xi in range(x + 1, 8):
-                for yi in range(y - 1,-1,-1):
-                    if x - xi == yi - y:
-                        if self.get(xi,yi) == self.reverse(color):
-                            continue
-                        elif self.get(xi,yi) == color:
-                            flag = True
-                            break
-                if flag:
+            minValue = min(8 - x,y)
+            for i in range(1,minValue):
+                if self.get(x + i,y - i) == self.reverse(color):
+                    continue
+                elif self.get(x + i,y - i) == color:
+                    for ii in range(1, i):
+                        self.board[x + ii][y - ii]=color
+                        break
+                else:
                     break
-            if flag:
-                for xii in range(x + 1,xi):
-                    for yii in range(y - 1,yi -1,-1):
-                        if xii - xi == yi - yii:
-                            self.board[xii][yii] = color
-                    
 
-            flag = False
-            for xi in range(x - 1,-1,-1):
-                for yi in range(y - 1,-1,-1):
-                    if x - xi == y - yi:
-                        if self.get(xi,yi) == self.reverse(color):
-                            continue
-                        elif self.get(xi,yi) == color:
-                            flag = True
-                            break
-                if flag:
+            minValue = min(x,y)
+            for i in range(1,minValue):
+                if self.get(x - i,y - i) == self.reverse(color):
+                    continue
+                elif self.get(x - i,y - i) == color:
+                    for ii in range(1, i):
+                        self.board[x - ii][y - ii]=color
+                        break
+                else:
                     break
-            if flag:
-                for xii in range(x - 1,xi -1,-1):
-                    for yii in range(y - 1,yi -1,-1):
-                        if xi - xii == yi - yii:
-                            self.board[xii][yii] = color
-                    
 
-            flag = False
-            for xi in range(x - 1,-1,-1):
-                for yi in range(y,8):
-                    if x - xi == yi - y:
-                        if self.get(xi,yi) == self.reverse(color):
-                            continue
-                        elif self.get(xi,yi) == color:
-                            flag = True
-                            break
-                if flag:
+            minValue = min(x,8 - y)
+            for i in range(1,minValue):
+                if self.get(x - i,y + i) == self.reverse(color):
+                    continue
+                elif self.get(x - i,y + i) == color:
+                    for ii in range(1, i):
+                        self.board[x - ii][y + ii]=color
+                        break
+                else:
                     break
-            if flag:
-                for xii in range(x - 1,xi -1,-1):
-                    for yii in range(y,yi):
-                        if xi - xii == yii - yi:
-                            self.board[xii][yii] = color
-                    
+
 #            self.printBoard()
         else:
             print("Err!!")
 
     def isGameOver(self):
-      return not self.getEmpty(self.black) == None or not self.getEmpty(self.white) == None
+      return not self.getNextCandidate(self.black) == None or not self.getNextCandidate(self.white) == None
     
     def result(self,count):
         white = 0
@@ -293,7 +266,7 @@ class Board:
                     black += 1
                 elif self.board[x][y]==self.white:
                     white += 1
-        print (f'{count}: black = {black}, white = {white}',end="")
+        print (f'{count}: black = {black}, white = {white}, ',end="")
         if white == black:
             print ("draw")
         elif white > black:
