@@ -33,12 +33,16 @@ class Points:
     def load(self,prefix,suffix):
         self.blackPoint = np.load(os.path.join(prefix,suffix+"_black.npy"))
         self.whitePoint = np.load(os.path.join(prefix,suffix+"_white.npy"))
-    
+
+    def setCount(self,count):
+        self.blackPoint /= count
+        self.whitePoint /= count
+
     def setResult(self,black,white,record):
         if black < white:
             self.whiteCount += 1
             for r in record:
-                color,x,y = r
+                x,y,color = r
                 if color == board.Board.white:
                     self.whitePoint[x][y] += white/(black+white)
                 else:
@@ -47,7 +51,7 @@ class Points:
         elif  black > white:
             self.blackCount += 1
             for r in record:
-                color,x,y = r
+                x,y,color = r
                 if color == board.Board.white:
                     self.whitePoint[x][y] -= white/(black+white)
                 else:
@@ -56,7 +60,7 @@ class Points:
         else:
             self.drawCount += 1
             for r in record:
-                color,x,y = r
+                x,y,color = r
                 if color == board.Board.white:
                     self.whitePoint[x][y] += white/(black+white)
                 else:

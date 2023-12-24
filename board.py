@@ -7,14 +7,15 @@ class Board:
     empty = 0
 
     def __init__(self) -> None:
-        self.board = [[ 0, 0, 0, 0, 0, 0, 0, 0],
-                [ 0, 0, 0, 0, 0, 0, 0, 0],
-                [ 0, 0, 0, 0, 0, 0, 0, 0],
-                [ 0, 0, 0, 1,-1, 0, 0, 0],
-                [ 0, 0, 0,-1, 1, 0, 0, 0],
-                [ 0, 0, 0, 0, 0, 0, 0, 0],
-                [ 0, 0, 0, 0, 0, 0, 0, 0],
-                [ 0, 0, 0, 0, 0, 0, 0, 0]]
+        self.board = [
+            [ 0, 0, 0, 0, 0, 0, 0, 0],
+            [ 0, 0, 0, 0, 0, 0, 0, 0],
+            [ 0, 0, 0, 0, 0, 0, 0, 0],
+            [ 0, 0, 0, 1,-1, 0, 0, 0],
+            [ 0, 0, 0,-1, 1, 0, 0, 0],
+            [ 0, 0, 0, 0, 0, 0, 0, 0],
+            [ 0, 0, 0, 0, 0, 0, 0, 0],
+            [ 0, 0, 0, 0, 0, 0, 0, 0]]
 
     def reverse(self,color):
         return -1*color
@@ -55,7 +56,7 @@ class Board:
         for xi in range(x + 1,8):
             if self.get(xi,y) == self.reverse(color):
                 continue
-            elif self.get(xi,y) == color and xi > x+1 and xi < 8:
+            elif self.get(xi,y) == color and xi > x + 1 and xi < 8:
                 return True
             else:
                 break
@@ -63,7 +64,7 @@ class Board:
         for xi in range(x - 1,-1,-1):
             if self.get(xi,y) == self.reverse(color):
                 continue
-            elif self.get(xi,y) == color and xi < x-1 and xi >=0:
+            elif self.get(xi,y) == color and xi < x - 1 and xi >=0:
                 return True
             else:
                 break
@@ -71,7 +72,7 @@ class Board:
         for yi in range(y + 1,8):
             if self.get(x,yi) == self.reverse(color):
                 continue
-            elif self.get(x,yi) == color and yi > y+1 and yi < 8:
+            elif self.get(x,yi) == color and yi > y + 1 and yi < 8:
                 return True
             else:
                 break
@@ -79,61 +80,81 @@ class Board:
         for yi in range(y - 1,-1,-1):
             if self.get(x,yi) == self.reverse(color):
                 continue
-            elif self.get(x,yi) == color and yi < y-1 and yi >=0:
+            elif self.get(x,yi) == color and yi < y - 1 and yi >=0:
                 return True
             else:
                 break
         
-        flag = False
-        for xi in range(x + 1,8):
-            for yi in range(y + 1,8):
-                if xi - x == yi - y and self.get(xi,yi) == self.reverse(color):
-                    continue
-                elif xi - x == yi - y and self.get(xi,yi) == color and xi > x + 1 and xi < 8 and yi > y + 1 and yi < 8:
-                    return True
-                elif  xi - x == yi - y:
-                    flag = True
+        minValue = min(8 - x,8 - y)
+        for i in range(1,minValue):
+            if self.get(x + i,y + i) == self.reverse(color):
+                if x + i + 1 >= 8 or y + i + 1 >= 8:
                     break
-            if  flag:
+                elif x + i + 1 < 8 and y + i + 1 < 8:
+                    currentColor = self.get(x + i +1,y + i + 1)
+                    if currentColor == self.reverse(color):
+                        continue
+                    elif currentColor == color:
+                        return True
+                    else:
+                        break
+                else:
+                    break
+            else:
                 break
-        
-        flag = False
-        for xi in range(x - 1,-1,-1):
-            for yi in range(y - 1,-1,-1):
-                if x - xi == y - yi and self.get(xi,yi) == self.reverse(color):
-                    continue
-                elif x - xi == y - yi and self.get(xi,yi) == color and xi < x - 1 and xi >=0 and yi < y - 1 and yi >=0:
-                    return True
-                elif  x - xi == y - yi:
-                    flag = True
+                    
+        minValue = min(8 - x,y)
+        for i in range(1,minValue):
+            if self.get(x + i,y - i) == self.reverse(color):
+                if x + i + 1 >= 8 or y - i - 1 < 0:
                     break
-            if  flag:
-                break
-        
-        flag = False
-        for xi in range(x - 1,-1,-1):
-            for yi in range(y + 1,8):
-                if x - xi == yi - y and self.get(xi,yi) == self.reverse(color):
-                    continue
-                elif x - xi == yi - y and self.get(xi,yi) == color and xi < x - 1 and xi >= 0 and yi > y + 1 and yi < 8:
-                    return True
-                elif  x - xi == yi - y:
-                    flag = True
+                elif x + i + 1 < 8 and y - i - 1 >=0 :
+                    currentColor = self.get(x + i + 1,y - i - 1)
+                    if currentColor == self.reverse(color):
+                        continue
+                    elif currentColor == color:
+                        return True
+                    else:
+                        break
+                else:
                     break
-            if  flag:
+            else:
                 break
 
-        flag = False
-        for xi in range(x + 1,8):
-            for yi in range(y - 1,-1,-1):
-                if xi - x == y - yi and self.get(xi,yi) == self.reverse(color):
-                    continue
-                elif xi - x == y - yi and self.get(xi,yi) == color and xi > x + 1 and xi < 8 and yi < y - 1 and yi >=0:
-                    return True
-                elif  xi - x == y - yi:
-                    flag = True
+        minValue = min(x,y)
+        for i in range(1,minValue):
+            if self.get(x - i,y - i) == self.reverse(color):
+                if x - i - 1 < 0 or y - i - 1 < 0:
                     break
-            if  flag:
+                elif x - i - 1 >= 0 and y - i - 1 >=0 :
+                    currentColor = self.get(x - i - 1,y - i - 1)
+                    if currentColor == self.reverse(color):
+                        continue
+                    elif currentColor == color:
+                        return True
+                    else:
+                        break
+                else:
+                    break
+            else:
+                break
+
+        minValue = min(x,8 - y)
+        for i in range(1,minValue):
+            if self.get(x - i,y - i) == self.reverse(color):
+                if x - i - 1 < 0 or y + i + 1 >= 8 :
+                    break
+                elif x - i - 1 >= 0 and y + i + 1 < 0 :
+                    currentColor = self.get(x - i - 1,y + i + 1)
+                    if currentColor == self.reverse(color):
+                        continue
+                    elif currentColor == color:
+                        return True
+                    else:
+                        break
+                else:
+                    break
+            else:
                 break
 
         return False

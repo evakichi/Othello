@@ -6,11 +6,11 @@ class Recorder:
         self.li = list()
 
     def record (self,pos,color):
-        self.li.append((color,)+pos)
+        self.li.append(pos+(color,))
     
     def printRetsult (self):
         for i,l in enumerate(self.li):
-            color,x,y = l
+            x,y,color = l
             print (f'{i + 1} : {board.Board.getColorString(color)} {x},{y}')
 
     def getResult (self):
