@@ -10,11 +10,11 @@ from multiprocessing import Process, Queue
 
 totalPoints = points.Points()
 
-counter = 100000
-threads = 50
+counter = 500000
+threads = 20
 
 pointPlayers = pointPlayer.pointPlayer()
-#pointPlayers.load("/home/evakichi/othellodata","100000")
+#pointPlayers.load("/home/evakichi/othellodata","1000000")
 randomPlayers = randomPlayer.randomPlayer()   
 inputPlayers = inputPlayer.inputPlayer()
 
@@ -70,17 +70,15 @@ if __name__ =='__main__':
         for t in range(threads):
             mainBoards.append(board.Board())
             queue.append(Queue())
-            processes.append(Process(target=battle,args=(mainBoards[t],randomPlayers,randomPlayers,queue[t],threads*count+t)))
+            processes.append(Process(target=battle,args=(mainBoards[t],pointPlayers,randomPlayers,queue[t],threads*count+t)))
         for t in range(threads):
             processes[t].start()
         for t in range(threads):
             processes[t].join()
         for q in queue:
-            results.append(q.get())
-    #    record.printRetsult()
-    for r in results:
-        black,white,record = r
-        totalPoints.setResult(black,white,record.getResult())
+            black,white,record = q.get()
+            totalPoints.setResult(black,white,record.getResult())
+#    record.printRetsult()
     totalPoints.setCount(counter*threads)
     totalPoints.printPoint()
     totalPoints.printWinCount()
