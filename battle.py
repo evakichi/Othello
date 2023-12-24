@@ -10,8 +10,8 @@ from multiprocessing import Process, Queue
 
 totalPoints = points.Points()
 
-counter = 1
-threads = 1
+counter = 100000
+threads = 50
 
 pointPlayers = pointPlayer.pointPlayer()
 #pointPlayers.load("/home/evakichi/othellodata","100000")
@@ -45,7 +45,7 @@ def battle(mainBoard,blackPlayer,whitePlayer,queue,count):
     record = recorder.Recorder()
     while mainBoard.isGameOver(): 
         color = mainBoard.reverse(color)
-        mainBoard.printBoard()
+#        mainBoard.printBoard()
         if color == mainBoard.black:
             li = mainBoard.getNextCandidate(color)
             if not li == None:
