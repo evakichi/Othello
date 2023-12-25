@@ -4,7 +4,6 @@ import points
 import pointPlayer
 import randomPlayer
 import inputPlayer
-import time
 from multiprocessing import Process, Queue
 
 
@@ -14,7 +13,7 @@ counter = 500000
 threads = 20
 
 pointPlayers = pointPlayer.pointPlayer()
-#pointPlayers.load("/home/evakichi/othellodata","1000000")
+#pointPlayers.load("/home/evakichi/othellodata_random_","1000000")
 randomPlayers = randomPlayer.randomPlayer()   
 inputPlayers = inputPlayer.inputPlayer()
 
@@ -40,7 +39,7 @@ def humanBattle(mainBoard,blackPlayer,whitePlayer,count):
 
 #humanBattle(board.Board(),inputPlayers,inputPlayers,1)
 
-def battle(mainBoard,blackPlayer,whitePlayer,queue,count):
+def comBattle(mainBoard,blackPlayer,whitePlayer,queue,count):
     color = mainBoard.white
     record = recorder.Recorder()
     while mainBoard.isGameOver(): 
@@ -70,7 +69,7 @@ if __name__ =='__main__':
         for t in range(threads):
             mainBoards.append(board.Board())
             queue.append(Queue())
-            processes.append(Process(target=battle,args=(mainBoards[t],pointPlayers,randomPlayers,queue[t],threads*count+t)))
+            processes.append(Process(target=comBattle,args=(mainBoards[t],randomPlayers,randomPlayers,queue[t],threads*count+t)))
         for t in range(threads):
             processes[t].start()
         for t in range(threads):
@@ -82,4 +81,4 @@ if __name__ =='__main__':
     totalPoints.setCount(counter*threads)
     totalPoints.printPoint()
     totalPoints.printWinCount()
-    totalPoints.save("/home/evakichi/othellodata",str(counter*threads))
+    totalPoints.save("/home/evakichi/othellodata_random_",str(counter*threads))
