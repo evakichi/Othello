@@ -4,13 +4,15 @@ import points
 import pointPlayer
 import randomPlayer
 import inputPlayer
+
+import os
 from multiprocessing import Process, Queue
 
 
 totalPoints = points.Points()
 
-counter = 500000
-threads = 20
+counter = 5
+threads = 10
 
 pointPlayers = pointPlayer.pointPlayer()
 #pointPlayers.load("/home/evakichi/othellodata_random_","1000000")
@@ -81,4 +83,6 @@ if __name__ =='__main__':
     totalPoints.setCount(counter*threads)
     totalPoints.printPoint()
     totalPoints.printWinCount()
-    totalPoints.save("/home/evakichi/othellodata_random_",str(counter*threads))
+    datadir = os.getcwd()+"/data/random/"
+    os.makedirs(datadir)
+    totalPoints.save(datadir,str(counter*threads))
