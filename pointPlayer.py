@@ -8,13 +8,13 @@ import numpy as np
 
 class pointPlayer(player.player):
 
-    def __init__(self,points) -> None:
-        self.points = points.Points(points)
-        self.homeDir = os.environ.get('HOME')
-        self.dataDir = os.path.join(self.homeDir,'.othellodata')
-        if not os.path.exists(self.dataDir)
-            os.makedirs(self.dataDir)
+    def __init__(self) -> None:
+        pass
     
+    def setTotalBattles(self,totalBattles):
+        self.points = points.Points(totalBattles)
+
+
     def load(self):
         self.points.load(os.path.join(self.homeDir,f'.othellodata/{self.points}.dat'))
 

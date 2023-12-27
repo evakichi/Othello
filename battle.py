@@ -1,27 +1,19 @@
 import board
 import recorder
-import points
-import player
-import pointPlayer
+#import pointPlayer
 import randomPlayer
-import inputPlayer
+#import inputPlayer
 
 import os
 from multiprocessing import Process, Queue
 
+counter = 50
+threads = 2
 
-totalPoints = points.Points()
+totalBattles = counter * threads
 
-counter = 5
-threads = 1
-
-currentPoints = 10000000
-
-pointPlayers = pointPlayer.pointPlayer(currentPoints)
-#pointPlayers.load("/home/evakichi/othellodata_random_","1000000")
-randomPlayers = randomPlayer.randomPlayer()   
-inputPlayers = inputPlayer.inputPlayer()
-
+whitePlayer = randomPlayer.randomPlayer(board.Board.white,totalBattles)   
+blackPlayer = randomPlayer.randomPlayer(board.Board.black,totalBattles)   
 
 def battle(mainBoard,blackPlayer,whitePlayer,queue,count,print_board=False):
     currentColor = mainBoard.white
@@ -56,9 +48,6 @@ def battle(mainBoard,blackPlayer,whitePlayer,queue,count,print_board=False):
             mainBoard.printBoard()
     queue.put(mainBoard.result(count)+(record,))
 
-
-battle(board.Board(),inputPlayers,inputPlayers,Queue(),0,print_board=True)
-
 if __name__ =='__main__':
     results = list()
     for count in range(counter):
@@ -68,18 +57,24 @@ if __name__ =='__main__':
         for t in range(threads):
             mainBoards.append(board.Board())
             queue.append(Queue())
-            processes.append(Process(target=battle,args=(mainBoards[t],inputPlayers,randomPlayers,queue[t],threads*count+t)))
+            processes.append(Process(target=battle,args=(mainBoards[t],blackPlayer,whitePlayer,queue[t],threads*count+t,False)))
         for t in range(threads):
             processes[t].start()
         for t in range(threads):
             processes[t].join()
         for q in queue:
             black,white,record = q.get()
-            totalPoints.setResult(black,white,record.getResult())
+            blackPlayer.setResult(black,white,record)
+            whitePlayer.setResult(black,white,record)
+
+    blackPlayer.summarize(totalBattles)
+    whitePlayer.summarize(totalBattles)
+            #randomPlayerRecorder.setResult(black,white,record.getResult())
 #    record.printRetsult()
-    totalPoints.setCount(counter*threads)
-    totalPoints.printPoint()
-    totalPoints.printWinCount()
-    datadir = os.getcwd()+"/data/random/"
-    os.makedirs(datadir,exist_ok=True)
-    totalPoints.save(datadir,str(counter*threads))
+#    randomPlayerRecorder.setCount(counter*threads)
+    blackPlayer.printPoint()
+    whitePlayer.printPoint()
+    blackPlayer.save()
+    whitePlayer.save()
+#    randomPlayerRecorder.printWinCount()
+#    randomPlayerRecorder.save(datadir,str(counter*threads))

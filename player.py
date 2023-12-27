@@ -1,10 +1,16 @@
 import board
-
+import os
 
 class player:
 
-    def __init__(self):
-        pass
+    def __init__(self,ownColor):
+        self.ownColor = ownColor
 
-    def getNext(self,currentBoard,color):
+        self.homeDir = os.environ.get('HOME')
+        self.dataDir = os.path.join(self.homeDir,'.othellodata')
+        if not os.path.exists(self.dataDir):
+            os.makedirs(self.dataDir)
+
+
+    def getNext(self,currentBoard):
         pass

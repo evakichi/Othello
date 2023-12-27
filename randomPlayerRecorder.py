@@ -6,12 +6,8 @@ import recorder
 class Points:
 
     def __init__(self) -> None:
-        self.blackCount = 0
-        self.blackPoint = np.zeros((8,8))
-        self.whiteCount = 0
-        self.whitePoint = np.zeros((8,8))
-        self.drawCount  = 0
-
+        pass
+    
     def printPoint(self):
         for x in range(0,8):
             for y in range(0,8):

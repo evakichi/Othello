@@ -21,10 +21,10 @@ class Board:
         return -1*color
     
     def getColorString(color):
-        if color == self.white:
-            return '○'
-        elif color == black:
+        if color == Board.black:
             return '●'
+        elif color == Board.white:
+            return '○'
         else:
             return '-'
 
