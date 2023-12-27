@@ -8,12 +8,12 @@ import os
 from multiprocessing import Process, Queue
 
 counter = 50
-threads = 2
+threads = 6
 
 totalBattles = counter * threads
 
-whitePlayer = randomPlayer.randomPlayer(board.Board.white,totalBattles)   
-blackPlayer = randomPlayer.randomPlayer(board.Board.black,totalBattles)   
+whitePlayer = randomPlayer.randomPlayer(board.Board.white)   
+blackPlayer = randomPlayer.randomPlayer(board.Board.black)   
 
 def battle(mainBoard,blackPlayer,whitePlayer,queue,count,print_board=False):
     currentColor = mainBoard.white
@@ -74,7 +74,7 @@ if __name__ =='__main__':
 #    randomPlayerRecorder.setCount(counter*threads)
     blackPlayer.printPoint()
     whitePlayer.printPoint()
-    blackPlayer.save()
-    whitePlayer.save()
+    blackPlayer.save(totalBattles)
+    whitePlayer.save(totalBattles)
 #    randomPlayerRecorder.printWinCount()
 #    randomPlayerRecorder.save(datadir,str(counter*threads))

@@ -7,9 +7,8 @@ import numpy as np
 
 class randomPlayer(player.player):
 
-    def __init__(self,color,count) -> None:
+    def __init__(self,color) -> None:
         super().__init__(color)
-        self.totalCount = count
         self.ownWinCount = 0
         self.ownPoint = np.zeros((8,8))
         self.drawCount  = 0
@@ -34,17 +33,17 @@ class randomPlayer(player.player):
     def getPoint(self):
         return self.ownPoint
 
-    def save(self):
+    def save(self,totalCounts):
         if self.ownColor == board.Board.black:
-            np.save(os.path.join(self.dataDir,"black."+str(self.totalCount)),self.ownPoint)
+            np.save(os.path.join(self.dataDir,"black."+str(totalCounts)),self.ownPoint)
         elif self.ownColor == board.Board.white:
-            np.save(os.path.join(self.dataDir,"white."+str(self.totalCount)),self.ownPoint)
+            np.save(os.path.join(self.dataDir,"white."+str(totalCounts)),self.ownPoint)
     
     def load(self,prefix,suffix):
         pass
 
-    def summarize(self,count):
-        self.ownPoint /= count
+    def summarize(self,totalCounts):
+        self.ownPoint /= totalCounts
 
     def setResult(self,black,white,record):
         if self.ownColor == board.Board.black and black > white:
