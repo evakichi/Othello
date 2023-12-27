@@ -34,7 +34,7 @@ class Points:
         self.blackPoint = np.load(os.path.join(prefix,suffix+"_black.npy"))
         self.whitePoint = np.load(os.path.join(prefix,suffix+"_white.npy"))
 
-    def setCount(self,count):
+    def normalize(self,count):
         self.blackPoint /= count
         self.whitePoint /= count
 

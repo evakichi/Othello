@@ -21,9 +21,9 @@ class Board:
         return -1*color
     
     def getColorString(color):
-        if color == -1:
+        if color == self.white:
             return '○'
-        elif color == 1:
+        elif color == black:
             return '●'
         else:
             return '-'
@@ -37,9 +37,9 @@ class Board:
             print (f'{i}',end="")
             for j in range(0,8):
                 if self.board[i][j]==self.black:
-                    print ("|○",end="")
-                elif self.board[i][j]==self.white:
                     print ("|●",end="")
+                elif self.board[i][j]==self.white:
+                    print ("|○",end="")
                 else:
                     print ("| ",end="")
             print ("|")

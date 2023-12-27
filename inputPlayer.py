@@ -1,7 +1,15 @@
+import player
 import board
 
-class inputPlayer:
+class inputPlayer(player.player):
+    def __init__(self):
+        pass
+
     def getNext(self,currentBoard,color):
+        if color == board.Board.white:
+            print ('input:○')
+        else:
+            print ('input:●')
         li = currentBoard.getNextCandidate(color)
         if not li == None:
             xInput = input('x:')

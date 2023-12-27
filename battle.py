@@ -1,6 +1,7 @@
 import board
 import recorder
 import points
+import player
 import pointPlayer
 import randomPlayer
 import inputPlayer
@@ -12,55 +13,51 @@ from multiprocessing import Process, Queue
 totalPoints = points.Points()
 
 counter = 5
-threads = 10
+threads = 1
 
-pointPlayers = pointPlayer.pointPlayer()
+currentPoints = 10000000
+
+pointPlayers = pointPlayer.pointPlayer(currentPoints)
 #pointPlayers.load("/home/evakichi/othellodata_random_","1000000")
 randomPlayers = randomPlayer.randomPlayer()   
 inputPlayers = inputPlayer.inputPlayer()
 
-def humanBattle(mainBoard,blackPlayer,whitePlayer,count):
-    color = mainBoard.white
+
+def battle(mainBoard,blackPlayer,whitePlayer,queue,count,print_board=False):
+    currentColor = mainBoard.white
     record = recorder.Recorder()
-    while mainBoard.isGameOver(): 
-        color = mainBoard.reverse(color)
+    if print_board:
         mainBoard.printBoard()
-        if color == mainBoard.black:
-            li = mainBoard.getNextCandidate(color)
-            if not li == None:
-                x,y = blackPlayer.getNext(mainBoard,color)
-                mainBoard.put((x,y),color)
-                record.record((x,y),color)
-        else:    
-            li = mainBoard.getNextCandidate(color)
-            if not li == None:
-                x,y = whitePlayer.getNext(mainBoard,color)
-                mainBoard.put((x,y),color)
-                record.record((x,y),color)
-    return mainBoard.result(count)+(record,)
-
-#humanBattle(board.Board(),inputPlayers,inputPlayers,1)
-
-def comBattle(mainBoard,blackPlayer,whitePlayer,queue,count):
-    color = mainBoard.white
-    record = recorder.Recorder()
     while mainBoard.isGameOver(): 
-        color = mainBoard.reverse(color)
-#        mainBoard.printBoard()
-        if color == mainBoard.black:
-            li = mainBoard.getNextCandidate(color)
+        currentColor = mainBoard.reverse(currentColor)
+        if currentColor == mainBoard.black:
+            li = mainBoard.getNextCandidate(currentColor)
             if not li == None:
-                x,y = blackPlayer.getNext(mainBoard,color)
-                mainBoard.put((x,y),color)
-                record.record((x,y),color)
+                x,y = blackPlayer.getNext(mainBoard,currentColor)
+                mainBoard.put((x,y),currentColor)
+                record.record((x,y),currentColor)
+                if print_board:
+                    print (f'● : put ({x},{y})')
+            else:
+                if print_board:
+                    print (f'● : pass!!')
         else:    
-            li = mainBoard.getNextCandidate(color)
+            li = mainBoard.getNextCandidate(currentColor)
             if not li == None:
-                x,y = whitePlayer.getNext(mainBoard,color)
-                mainBoard.put((x,y),color)
-                record.record((x,y),color)
-    result = mainBoard.result(count)+(record,)
-    queue.put(result)
+                x,y = whitePlayer.getNext(mainBoard,currentColor)
+                mainBoard.put((x,y),currentColor)
+                record.record((x,y),currentColor)
+                if print_board:
+                    print (f'○ : put ({x},{y})')
+            else:
+                if print_board:
+                    print (f'○ : pass!!')
+        if print_board:        
+            mainBoard.printBoard()
+    queue.put(mainBoard.result(count)+(record,))
+
+
+battle(board.Board(),inputPlayers,inputPlayers,Queue(),0,print_board=True)
 
 if __name__ =='__main__':
     results = list()
@@ -71,7 +68,7 @@ if __name__ =='__main__':
         for t in range(threads):
             mainBoards.append(board.Board())
             queue.append(Queue())
-            processes.append(Process(target=comBattle,args=(mainBoards[t],randomPlayers,randomPlayers,queue[t],threads*count+t)))
+            processes.append(Process(target=battle,args=(mainBoards[t],inputPlayers,randomPlayers,queue[t],threads*count+t)))
         for t in range(threads):
             processes[t].start()
         for t in range(threads):
@@ -84,5 +81,5 @@ if __name__ =='__main__':
     totalPoints.printPoint()
     totalPoints.printWinCount()
     datadir = os.getcwd()+"/data/random/"
-    os.makedirs(datadir)
+    os.makedirs(datadir,exist_ok=True)
     totalPoints.save(datadir,str(counter*threads))

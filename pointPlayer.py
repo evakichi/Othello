@@ -1,15 +1,25 @@
+import player
 import board
 import points
+
+import os
 import numpy as np
 
 
-class pointPlayer:
+class pointPlayer(player.player):
 
-    def __init__(self) -> None:
-        self.points=points.Points()
+    def __init__(self,points) -> None:
+        self.points = points.Points(points)
+        self.homeDir = os.environ.get('HOME')
+        self.dataDir = os.path.join(self.homeDir,'.othellodata')
+        if not os.path.exists(self.dataDir)
+            os.makedirs(self.dataDir)
     
-    def load(self,prefix,suffix):
-        self.points.load(prefix,suffix)
+    def load(self):
+        self.points.load(os.path.join(self.homeDir,f'.othellodata/{self.points}.dat'))
+
+    def save(self):
+        self.points.save(os.path.join(self.homeDir,f'.othellodata/{self.points}.dat'))
 
     def getPoint(self,position,color):
         x,y = position

@@ -1,7 +1,8 @@
-import random
+import player
 import board
+import random
 
-class randomPlayer:
+class randomPlayer(player.player):
 
     def __init__(self) -> None:
         pass
