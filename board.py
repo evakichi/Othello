@@ -287,6 +287,10 @@ class Board:
                     black += 1
                 elif self.board[x][y]==self.white:
                     white += 1
+        return black,white
+
+    def printResult(self,count):
+        black, white = self.result(count)
         print (f'{count}: black = {black}, white = {white}, ',end="")
         if white == black:
             print ("draw")
@@ -294,4 +298,3 @@ class Board:
             print ("white win")
         else:
             print ("black win")
-        return black,white

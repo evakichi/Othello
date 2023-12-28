@@ -24,10 +24,14 @@ class randomPlayer(player.player):
             for y in range(0,8):
                 print (f'{x},{y}={self.ownPoint[x,y]}')
 
+    def printWinCount(self):
+        print(board.Board.getColorString(self.ownColor)+":"+str(self.getWinCount()))
+
+
     def incrementWinCount(self):
         self.ownWinCount += 1
 
-    def getWincount(self):
+    def getWinCount(self):
         return self.ownWinCount
     
     def getPoint(self):

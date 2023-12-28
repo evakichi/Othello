@@ -8,7 +8,7 @@ import os
 from multiprocessing import Process, Queue
 
 counter = 50
-threads = 6
+threads = 72
 
 totalBattles = counter * threads
 
@@ -46,6 +46,8 @@ def battle(mainBoard,blackPlayer,whitePlayer,queue,count,print_board=False):
                     print (f'○ : pass!!')
         if print_board:        
             mainBoard.printBoard()
+    if print_board:
+        mainBoard.printResult()
     queue.put(mainBoard.result(count)+(record,))
 
 if __name__ =='__main__':
@@ -74,6 +76,8 @@ if __name__ =='__main__':
 #    randomPlayerRecorder.setCount(counter*threads)
     blackPlayer.printPoint()
     whitePlayer.printPoint()
+    blackPlayer.printWinCount()
+    whitePlayer.printWinCount()
     blackPlayer.save(totalBattles)
     whitePlayer.save(totalBattles)
 #    randomPlayerRecorder.printWinCount()
