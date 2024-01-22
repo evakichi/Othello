@@ -48,6 +48,88 @@ class Board:
     def get (self,x,y):
         return self.board[x][y]
 
+    def altIsAvailable(self,x,y,color):
+        if not self.board[x][y] == self.empty:
+            return False
+
+        if x < 6 and self.board[x + 1][y] == self.reverse(color):
+            for e in range(2, 8 - x):
+                if self.board[x + e][y] == self.reverse(color):
+                    continue
+                elif self.board[x + e][y] == color:
+                    return True
+                else:
+                    break
+
+        if x > 1 and self.board[x - 1][y] == self.reverse(color):
+            for e in range(2, x + 1):
+                if self.board[x - e][y] == self.reverse(color):
+                    continue
+                elif self.board[x - e][y] == color:
+                    return True
+                else:
+                    break
+
+        if y < 6 and self.board[x][y + 1] == self.reverse(color):
+            for e in range(2, 8 - y):
+                if self.board[x][y + e] == self.reverse(color):
+                    continue
+                elif self.board[x][y + e] == color:
+                    return True
+                else:
+                    break
+
+        if y > 1 and self.board[x][y - 1] == self.reverse(color):
+            for e in range(2, y + 1):
+                if self.board[x][y - e] == self.reverse(color):
+                    continue
+                elif self.board[x][y - e] == color:
+                    return True
+                else:
+                    break
+
+        minValue = min(x,y)
+        maxValue = max(x,y)
+
+        if max(minValue, maxValue) < 6 and self.board[x + 1][y + 1] == self.reverse(color):
+            for e in range(2,min(minValue,maxValue)):
+                if self.board[x + e][y + e] == self.reverse(color):
+                    continue
+                elif self.board[x + e][y + e] == color:
+                    return True
+                else:
+                    break
+
+        if minValue > 1 and self.board[x + 1][y - 1] == self.reverse(color):
+            for e in range(2,minValue):
+                if self.board[x + e][y - e] == self.reverse(color):
+                    continue
+                elif self.board[x + e][y - e] == color:
+                    return True
+                else:
+                    break
+
+        if minValue > 1 and self.board[x - 1][y - 1] == self.reverse(color):
+            for e in range(2,minValue):
+                if self.board[x - e][y - e] == self.reverse(color):
+                    continue
+                elif self.board[x - e][y - e] == color:
+                    return True
+                else:
+                    break
+
+        if minValue > 1 and self.board[x - 1][y + 1] == self.reverse(color):
+            for e in range(2,minValue):
+                if self.board[x - e][y + e] == self.reverse(color):
+                    continue
+                elif self.board[x - e][y + e] == color:
+                    return True
+                else:
+                    break
+
+        return False
+    
+
     def isAvailable(self,x,y,color):
         
         if not self.board[x][y] == self.empty:
@@ -165,6 +247,8 @@ class Board:
             for y in range(0,8):
                 if self.isAvailable(x,y,color):
                     l.append((x,y))
+                    if not self.altIsAvailable(x,y,color):
+                        print ("Fail")
         if len(l) == 0:
             return None
         return l

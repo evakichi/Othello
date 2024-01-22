@@ -8,7 +8,7 @@ import os
 from multiprocessing import Process, Queue
 
 counter = 50
-threads = 72
+threads = 1
 
 totalBattles = counter * threads
 
