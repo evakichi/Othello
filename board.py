@@ -284,15 +284,20 @@ class Board:
 
     def printRecord(self,x,y,color):
         if color == self.black:
-            print (f'○:put{x},{y}')
+            print (f'B:put{x},{y}')
         else:
-            print (f'●:put{x},{y}')
+            print (f'W:put{x},{y}')
 
     def getNextPos(self):
         return self.nextPos
 
     def getNextColor(self):
         return self.nextColor
+
+    def copyAndNext(self,p,color):
+        c = self.copy()
+        c.putNext(p,color)
+        return c
 
     def putNext(self,n,nextColor):
 
@@ -522,7 +527,6 @@ class Board:
             print("Err!!")
 
     def isGameOver(self):
-      print (f'{self.getNextCandidate(self.black) == None}, {self.getNextCandidate(self.white) == None}')
       return self.getNextCandidate(self.black) == None and self.getNextCandidate(self.white) == None
     
     def result(self,count):

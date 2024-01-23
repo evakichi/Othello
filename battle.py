@@ -5,10 +5,11 @@ import randomPlayer
 import inputPlayer
 import time
 import os
+import sys
 from multiprocessing import Process, Queue
 
-counter = 1
-threads = 1
+counter = 100
+threads = 20
 
 totalBattles = counter * threads
 
@@ -73,7 +74,7 @@ if __name__ =='__main__':
         for t in range(threads):
             mainBoards.append(board.Board())
             queue.append(Queue())
-            processes.append(Process(target=battle,args=(mainBoards[t],blackPlayer,whitePlayer,queue[t],threads*count+t,True)))
+            processes.append(Process(target=battle,args=(mainBoards[t],blackPlayer,whitePlayer,queue[t],threads*count+t,False)))
         for t in range(threads):
             processes[t].start()
         for t in range(threads):

@@ -13,10 +13,10 @@ class pointPlayer(player.player):
     def load(self,iter):
         if self.ownColor == board.Board.white:
             self.ownPoints = np.load(os.path.join(self.homeDir,f'.othellodata/white.{iter}.npy'))
-            self.opponentPoints = np.load(os.path.join(self.homeDir,f'.othellodata/black.{iter}.npy'))
+            self.oppPoints = np.load(os.path.join(self.homeDir,f'.othellodata/black.{iter}.npy'))
         elif self.ownColor == board.Board.black:
             self.ownPoints = np.load(os.path.join(self.homeDir,f'.othellodata/black.{iter}.npy'))
-            self.opponentPoints = np.load(os.path.join(self.homeDir,f'.othellodata/white.{iter}.npy'))
+            self.oppPoints = np.load(os.path.join(self.homeDir,f'.othellodata/white.{iter}.npy'))
 
     def save(self,iter):
         pass
@@ -48,17 +48,18 @@ class pointPlayer(player.player):
         x,y = position
         return self.ownPoints[x,y]
 
-    def getOpponentPoint(self,position):
+    def getOppPoint(self,position):
         if position == None:
             return None
         x,y = position
-        return self.opponentPoints[x,y]
+        return self.oppPoints[x,y]
 
     def nodePoint(self,currentBoard):
+        pos = currentBoard.getNextPos()
         if currentBoard.getNextColor() == self.ownColor:
-            return self.getOwnPoint(currentBoard.getNextPos())
+            return self.getOwnPoint(pos)
         else:
-            return self.getOpponentPoint(currentBoard.getNextPos())
+            return self.getOppPoint(pos)
 
     def minMax(self,currentBoard,maxDepth,currentDepth,p,color):
 
@@ -69,49 +70,59 @@ class pointPlayer(player.player):
         
         if currentDepth == 0:
             maxPos = nextCandidate[0]
-            nextBoard = currentBoard.copy()
-            nextBoard.putNext(maxPos,color)
+            nextBoard = currentBoard.copyAndNext(maxPos,color)
             maxPoint = self.nodePoint(nextBoard)
             for nc in nextCandidate:
-                nextBoard = currentBoard.copy()
-                nextBoard.putNext(nc,color)
+                nextBoard = currentBoard.copyAndNext(nc,color)
                 mm = self.minMax(nextBoard,maxDepth,currentDepth + 1,nc,color)
                 if mm != None and mm[1] > maxPoint:
                     maxPos,maxPoint = mm      
-            print (maxPos,maxPoint)
             return maxPos,maxPoint
 
         if currentDepth == maxDepth:
             return p,self.nodePoint(currentBoard)
 
-        if color == self.ownColor:
-            maxPos = (-1,-1)
-            maxPoint = -1*sys.float_info.max
-            if nextCandidate != None:
-                for nc in nextCandidate:
-                    nextBoard = currentBoard.copy()
-                    nextBoard.putNext(nc,color)
-                    mm = self.minMax(nextBoard,maxDepth,currentDepth + 1,p,color * -1)
-                    if mm != None and mm[1] > maxPoint:
-                        maxPos,maxPoint = mm
-                return maxPos,maxPoint
-            return p,maxPoint
-        
-        if color != self.ownColor:
-            minPos = (-1,-1)
-            minPoint = sys.float_info.max
-            if nextCandidate != None:
-                for nc in nextCandidate:
-                    nextBoard = currentBoard.copy()
-                    nextBoard.putNext(nc,color)
-                    mm = self.minMax(nextBoard,maxDepth,currentDepth + 1,p,color * -1)
-                    if mm != None and mm[1] <= minPoint:
-                        minPos,minPoint = mm
-                return minPos,minPoint
-            return p,minPoint
-        
+        if currentBoard.isGameOver():
+            black,white = currentBoard.result(0)
+            if color == currentBoard.black: 
+                if black > white:
+                    return p,1.0
+                if white > black:
+                    return p,-1.0
+                else:
+                    return p,0.0
+            if color == currentBoard.white: 
+                if black < white:
+                    return p,1.0
+                if white < black:
+                    return p,-1.0
+                else:
+                    return p,0.0
+
+        pos = (-1,-1)
+        point = sys.float_info.max
+
+        if nextCandidate != None:
+            nextBoard = currentBoard.copyAndNext(nextCandidate[0],color)
+            pos,point = (nextCandidate[0],self.nodePoint(nextBoard))
+        else:
+            if color == self.ownColor:
+                point = -1 * point
+
+        if nextCandidate != None:
+            for nc in nextCandidate:
+                nextBoard = currentBoard.copyAndNext(nc,color)
+                mm = self.minMax(nextBoard,maxDepth,currentDepth + 1,p,color * -1)
+                if mm != None and color == self.ownColor and mm[1] > point:
+                    pos,point = mm
+                if mm != None and color != self.ownColor and mm[1] < point:
+                    pos,point = mm
+            return pos,point
+        return p,point
+
+
     def getNext(self,currentBoard):
-        m = self.minMax(currentBoard,6,0,(-1,-1),self.ownColor)
+        m = self.minMax(currentBoard,1,0,(-1,-1),self.ownColor)
         if m == None:
             return None
         return m[0]
