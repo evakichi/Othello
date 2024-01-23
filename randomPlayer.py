@@ -9,14 +9,14 @@ class randomPlayer(player.player):
 
     def __init__(self,color) -> None:
         super().__init__(color)
-        self.ownWinCount = 0
         self.ownPoint = np.zeros((8,8))
-        self.drawCount  = 0
 
-    def getNext(self,currentBoard,color):
-        li = currentBoard.getNextCandidate(color)
-        position = random.randint(0,len(li)-1)
-        return li[position]
+    def getNext(self,currentBoard):
+        candidateList = currentBoard.getNextCandidate(self.ownColor)
+        if candidateList == None:
+            return None
+        position = random.randint(0,len(candidateList)-1)
+        return candidateList[position]
     
     def printPoint(self):
         print(board.Board.getColorString(self.ownColor))
@@ -26,7 +26,6 @@ class randomPlayer(player.player):
 
     def printWinCount(self):
         print(board.Board.getColorString(self.ownColor)+":"+str(self.getWinCount()))
-
 
     def incrementWinCount(self):
         self.ownWinCount += 1

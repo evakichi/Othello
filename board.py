@@ -17,6 +17,13 @@ class Board:
             [ 0, 0, 0, 0, 0, 0, 0, 0],
             [ 0, 0, 0, 0, 0, 0, 0, 0]]
 
+    def copy(self):
+        b = Board()
+        for x in range(8):
+            for y in range(8):
+                b.put(x,y,self.get(x,y))
+        return b
+
     def reverse(self,color):
         return -1*color
     
@@ -37,6 +44,12 @@ class Board:
     def isEmpty(self,x,y):
         return self.get(x,y) == self.empty
 
+    def isReverse(self,x,y,color):
+        return self.get(x,y) == self.reverse(color)
+
+    def isNormal(self,x,y,color):
+        return self.get(x,y) == color
+
     def printBoard(self):
         print (" ",end="")
         for j in range(0,8):
@@ -54,92 +67,93 @@ class Board:
             print ("|")
 
 
-    def altIsAvailable(self,x,y,color):
+    def isAvailable(self,pos,currentColor):
+        
+        x,y = pos
 
         if not self.isEmpty(x,y):
             return False
 
-        if x < 6 and self.get(x + 1,y) == self.reverse(color):
+        if x < 6 and self.isReverse(x + 1,y,currentColor):
             for e in range(2, 8 - x):
-                if self.get(x + e,y) == self.reverse(color):
+                if self.isReverse(x + e,y,currentColor):
                     continue
-                elif self.get(x + e,y) == color:
+                elif self.isNormal(x + e,y,currentColor):
                     return True
                 else:
                     break
 
-        if x > 1 and self.get(x - 1,y) == self.reverse(color):
+        if x > 1 and self.isReverse(x - 1,y,currentColor):
             for e in range(2, x + 1):
-                if self.get(x - e,y) == self.reverse(color):
+                if self.isReverse(x - e,y,currentColor):
                     continue
-                elif self.get(x - e,y) == color:
+                elif self.isNormal(x - e,y,currentColor):
                     return True
                 else:
                     break
 
-        if y < 6 and self.get(x,y + 1) == self.reverse(color):
+        if y < 6 and self.isReverse(x,y + 1,currentColor):
             for e in range(2, 8 - y):
-                if self.get(x,y + e) == self.reverse(color):
+                if self.isReverse(x,y + e,currentColor):
                     continue
-                elif self.get(x,y + e) == color:
+                elif self.isNormal(x,y + e,currentColor):
                     return True
                 else:
                     break
 
-        if y > 1 and self.get(x,y - 1) == self.reverse(color):
+        if y > 1 and self.isReverse(x,y - 1,currentColor):
             for e in range(2, y + 1):
-                if self.get(x,y - e) == self.reverse(color):
+                if self.isReverse(x,y - e,currentColor):
                     continue
-                elif self.get(x,y - e) == color:
+                elif self.isNormal(x,y - e,currentColor):
                     return True
                 else:
                     break
 
         minValue = min(7 - x,7 - y)
-        if minValue > 1 and self.get(x + 1,y + 1) == self.reverse(color):
+        if minValue > 1 and self.isReverse(x + 1,y + 1,currentColor):
             for e in range(2, minValue + 1):
-                if self.get(x + e,y + e) == self.reverse(color):
+                if self.isReverse(x + e,y + e,currentColor):
                     continue
-                elif self.get(x + e,y + e) == color:
+                elif self.isNormal(x + e,y + e,currentColor):
                     return True
                 else:
                     break
 
         minValue = min(7 - x,y)
-        if minValue > 1 and self.get(x + 1,y - 1) == self.reverse(color):
+        if minValue > 1 and self.get(x + 1,y - 1) == self.reverse(currentColor):
             for e in range(2, minValue + 1):
-                if self.get(x + e,y - e) == self.reverse(color):
+                if self.isReverse(x + e,y - e,currentColor):
                     continue
-                elif self.get(x + e,y - e) == color:
+                elif self.isNormal(x + e,y - e,currentColor):
                     return True
                 else:
                     break
 
         minValue = min(x,y)
-        if minValue > 1 and self.get(x - 1,y - 1) == self.reverse(color):
+        if minValue > 1 and self.isReverse(x - 1,y - 1,currentColor):
             for e in range(2, minValue + 1):
-                if self.get(x - e,y - e) == self.reverse(color):
+                if self.isReverse(x - e,y - e,currentColor):
                     continue
-                elif self.get(x - e,y - e) == color:
+                elif self.isNormal(x - e,y - e,currentColor):
                     return True
                 else:
                     break
 
         minValue = min(x,7 - y)
-        if minValue > 1 and self.get(x - 1,y + 1) == self.reverse(color):
+        if minValue > 1 and self.isReverse(x - 1,y + 1,currentColor):
             for e in range(2, minValue + 1):
-                if self.get(x - e,y + e) == self.reverse(color):
+                if self.isReverse(x - e,y + e,currentColor):
                     continue
-                elif self.get(x - e,y + e) == color:
+                elif self.isNormal(x - e,y + e,currentColor):
                     return True
                 else:
                     break
 
         return False
-    
 
-    def isAvailable(self,x,y,color):
-        
+    def altIsAvailable(self,pos,color):
+        x,y = pos
         if not self.isEmpty(x,y):
             return False
         
@@ -253,22 +267,13 @@ class Board:
         l = list()
         for x in range(0,8):
             for y in range(0,8):
-                if self.isAvailable(x,y,color):
-                    l.append((x,y))
+                p = (x,y)
+                if self.isAvailable(p,color):
+                    l.append(p)
         if len(l) == 0:
             return None
         return l
 
-    def altGetNextCandidate(self,color):
-        l = list()
-        for x in range(0,8):
-            for y in range(0,8):
-                if self.altIsAvailable(x,y,color):
-                    l.append((x,y))
-        if len(l) == 0:
-            return None
-        return l
-            
     def printEmptyList(self,color):
         li = self.getNextCandidate(color)
         if not li == None:
@@ -282,7 +287,128 @@ class Board:
         else:
             print (f'●:put{x},{y}')
 
-    def putNext(self,pos,color):
+
+    def putNext(self,pos,currentColor):
+
+        x, y = pos
+
+        if not self.isEmpty(x,y):
+            return False
+        
+        self.put(x,y,currentColor)
+
+        if x < 6 and self.isReverse(x + 1,y,currentColor):
+            for e in range(2, 8 - x):
+                if self.isReverse(x + e,y,currentColor):
+                    continue
+                elif self.isNormal(x + e,y,currentColor):
+#                    print(f'a:↓:{e}')
+                    for ee in range(1,e):
+#                        print(f'a:put({x+ee},{y})')
+                        self.put(x + ee,y,currentColor)
+                    break
+                else:
+                    break
+
+        if x > 1 and self.isReverse(x - 1,y,currentColor):
+            for e in range(2, x + 1):
+                if self.isReverse(x - e,y,currentColor):
+                    continue
+                elif self.isNormal(x - e,y,currentColor):
+#                    print(f'a:↑:{e}')
+                    for ee in range(1,e):
+#                        print(f'a:put({x-ee},{y})')
+                        self.put(x - ee,y,currentColor)
+                    break
+                else:
+                    break
+
+        if y < 6 and self.isReverse(x,y + 1,currentColor):
+            for e in range(2, 8 - y):
+                if self.isReverse(x,y + e,currentColor):
+                    continue
+                elif self.isNormal(x,y + e,currentColor):
+#                    print(f'a:→:{e}')
+                    for ee in range(1,e):
+#                        print(f'a:put({x},{y+ee})')
+                        self.put(x,y + ee,currentColor)
+                    break
+                else:
+                    break
+
+        if y > 1 and self.isReverse(x,y - 1,currentColor):
+            for e in range(2, y + 1):
+                if self.isReverse(x,y - e,currentColor):
+                    continue
+                elif self.isNormal(x,y - e,currentColor):
+#                    print(f'a:←:{e}')
+                    for ee in range(1,e):
+#                        print(f'a:put({x},{y-ee})')
+                        self.put(x,y - ee,currentColor)
+                    break
+                else:
+                    break
+
+        minValue = min(7 - x,7 - y)
+        if minValue > 1 and self.isReverse(x + 1,y + 1,currentColor):
+            for e in range(2, minValue + 1):
+                if self.isReverse(x + e,y + e,currentColor):
+                    continue
+                elif self.isNormal(x + e,y + e,currentColor):
+#                    print(f'a:↘:{e}')
+                    for ee in range(1,e):
+#                        print(f'a:put({x + ee},{y + ee})')
+                        self.put(x + ee,y + ee,currentColor)
+                    break
+                else:
+                    break
+
+        minValue = min(7 - x,y)
+        if minValue > 1 and self.get(x + 1,y - 1) == self.reverse(currentColor):
+            for e in range(2, minValue + 1):
+                if self.isReverse(x + e,y - e,currentColor):
+                    continue
+                elif self.isNormal(x + e,y - e,currentColor):
+#                    print(f'a:↙:{e}')
+                    for ee in range(1,e):
+#                        print(f'a:put({x + ee},{y - ee})')
+                        self.put(x + ee,y - ee,currentColor)
+                    break
+                else:
+                    break
+
+        minValue = min(x,y)
+        if minValue > 1 and self.isReverse(x - 1,y - 1,currentColor):
+            for e in range(2, minValue + 1):
+                if self.isReverse(x - e,y - e,currentColor):
+                    continue
+                elif self.isNormal(x - e,y - e,currentColor):
+#                    print(f'a:↖:{e}')
+                    for ee in range(1,e):
+#                        print(f'a:put({x - ee},{y - ee})')
+                        self.put(x - ee,y - ee,currentColor)
+                    break
+                else:
+                    break
+
+        minValue = min(x,7 - y)
+        if minValue > 1 and self.isReverse(x - 1,y + 1,currentColor):
+            for e in range(2, minValue + 1):
+                if self.isReverse(x - e,y + e,currentColor):
+                    continue
+                elif self.isNormal(x - e,y + e,currentColor):
+#                    print(f'a:↗:{e}')
+                    for ee in range(1,e):
+#                        print(f'a:put({x - ee},{y + ee})')
+                        self.put(x - ee,y + ee,currentColor)
+                    break
+                else:
+                    break
+
+        return False
+    
+
+    def altPutNext(self,pos,color):
         x,y = pos
         if self.isAvailable(x,y,color):
             self.put(x,y,color)
@@ -292,6 +418,7 @@ class Board:
                     continue
                 elif self.get(i,y) == color:
                     for ii in range(x+1,i):
+#                        print(f'n:put({ii},{y})')
                         self.put(ii,y,color)
                     break
                 else:
@@ -302,6 +429,7 @@ class Board:
                     continue
                 elif self.get(i,y) == color:
                     for ii in range(x-1,i-1,-1):
+#                        print(f'n:put({ii},{y})')
                         self.put(ii,y,color)
                     break
                 else:
@@ -312,6 +440,7 @@ class Board:
                     continue
                 elif self.get(x,i) == color:
                     for ii in range(y+1,i):
+#                        print(f'n:put({x},{ii})')
                         self.put(x,ii,color)
                     break
                 else:
@@ -322,6 +451,7 @@ class Board:
                     continue
                 elif self.get(x,i) == color:
                     for ii in range(y-1,i-1,-1):
+#                        print(f'n:put({x},{ii})')
                         self.put(x,ii,color)
                     break
                 else:
@@ -333,41 +463,45 @@ class Board:
                     continue
                 elif self.get(x + i,y + i) == color:
                     for ii in range(1, i):
+#                        print(f'n:put({x + ii},{y + ii})')
                         self.put(x + ii,y + ii,color)
-                        break
+                    break
                 else:
                     break
 
-            minValue = min(8 - x,y)
+            minValue = min(8 - x,y + 1)
             for i in range(1,minValue):
                 if self.get(x + i,y - i) == self.reverse(color):
                     continue
                 elif self.get(x + i,y - i) == color:
                     for ii in range(1, i):
+#                        print(f'n:put({x + ii},{y - ii})')
                         self.put(x + ii,y - ii,color)
-                        break
+                    break
                 else:
                     break
 
-            minValue = min(x,y)
+            minValue = min(x + 1,y + 1)
             for i in range(1,minValue):
                 if self.get(x - i,y - i) == self.reverse(color):
                     continue
                 elif self.get(x - i,y - i) == color:
                     for ii in range(1, i):
+#                        print(f'n:put({x - ii},{y - ii})')
                         self.put(x - ii,y - ii,color)
-                        break
+                    break
                 else:
                     break
 
-            minValue = min(x,8 - y)
+            minValue = min(x + 1,8 - y)
             for i in range(1,minValue):
                 if self.get(x - i,y + i) == self.reverse(color):
                     continue
                 elif self.get(x - i,y + i) == color:
                     for ii in range(1, i):
+#                        print(f'n:put({x - ii},{y + ii})')
                         self.put(x - ii,y + ii,color)
-                        break
+                    break
                 else:
                     break
 

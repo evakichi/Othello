@@ -1,8 +1,8 @@
 import board
 import recorder
-#import pointPlayer
+import pointPlayer
 import randomPlayer
-#import inputPlayer
+import inputPlayer
 import time
 import os
 from multiprocessing import Process, Queue
@@ -13,62 +13,48 @@ threads = 1
 totalBattles = counter * threads
 
 whitePlayer = randomPlayer.randomPlayer(board.Board.white)   
-blackPlayer = randomPlayer.randomPlayer(board.Board.black)   
+blackPlayer = pointPlayer.pointPlayer(board.Board.black)   
+
+blackPlayer.load(2000)
 
 def battle(mainBoard,blackPlayer,whitePlayer,queue,count,print_board=False):
     currentColor = mainBoard.white
     record = recorder.Recorder()
-    altTotal = 0.0
-    normalTotal = 0.0
+
     if print_board:
         mainBoard.printBoard()
     while mainBoard.isGameOver(): 
         currentColor = mainBoard.reverse(currentColor)
+        p = None
         if currentColor == mainBoard.black:
-            altStart = time.time()
-            li = mainBoard.altGetNextCandidate(currentColor)
-            altEnd = time.time()
-            altTotal += (altEnd - altStart)
+            p = blackPlayer.getNext(mainBoard)
+            if print_board:
+                x,y = p
+                print (f'black : put ({x},{y})')
+        elif currentColor == mainBoard.white:
+            p = whitePlayer.getNext(mainBoard)
+            if print_board:
+                x,y = p
+                print (f'white : put ({x},{y})')
+                
+        if p != None:
+            if not mainBoard.isAvailable(p,currentColor):
+                print("Vioration")
+            mainBoard.putNext(p,currentColor)
+            record.record(p,currentColor)
+        else:
+            if print_board:
+                if currentColor == mainBoard.black:
+                    print (f'black : pass!!')
+                elif currentColor == mainBoard.white:
+                    print (f'white : pass!!')
 
-            normalStart = time.time()
-            li = mainBoard.getNextCandidate(currentColor)
-            normalEnd = time.time()
-            normalTotal += (normalEnd - normalStart)
-
-            if not li == None:
-                x,y = blackPlayer.getNext(mainBoard,currentColor)
-                mainBoard.putNext((x,y),currentColor)
-                record.record((x,y),currentColor)
-                if print_board:
-                    print (f'● : put ({x},{y})')
-            else:
-                if print_board:
-                    print (f'● : pass!!')
-        else:    
-            altStart = time.time()
-            li = mainBoard.altGetNextCandidate(currentColor)
-            altEnd = time.time()
-            altTotal += (altEnd - altStart)
-
-            normalStart = time.time()
-            li = mainBoard.getNextCandidate(currentColor)
-            normalEnd = time.time()
-            normalTotal += (normalEnd - normalStart)
-            
-            if not li == None:
-                x,y = whitePlayer.getNext(mainBoard,currentColor)
-                mainBoard.putNext((x,y),currentColor)
-                record.record((x,y),currentColor)
-                if print_board:
-                    print (f'○ : put ({x},{y})')
-            else:
-                if print_board:
-                    print (f'○ : pass!!')
         if print_board:        
             mainBoard.printBoard()
+
     if print_board:
-        mainBoard.printResult()
-    print(f'noemal = {normalTotal}, alt = {altTotal}')
+        mainBoard.printResult(count)
+
     queue.put(mainBoard.result(count)+(record,))
 
 if __name__ =='__main__':
