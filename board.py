@@ -28,6 +28,15 @@ class Board:
         else:
             return '-'
 
+    def put (self,x,y,color):
+        self.board[x][y] = color
+
+    def get (self,x,y):
+        return self.board[x][y]
+
+    def isEmpty(self,x,y):
+        return self.get(x,y) == self.empty
+
     def printBoard(self):
         print (" ",end="")
         for j in range(0,8):
@@ -36,94 +45,92 @@ class Board:
         for i in range(0,8):
             print (f'{i}',end="")
             for j in range(0,8):
-                if self.board[i][j]==self.black:
+                if self.get(i,j)==self.black:
                     print ("|●",end="")
-                elif self.board[i][j]==self.white:
+                elif self.get(i,j)==self.white:
                     print ("|○",end="")
                 else:
                     print ("| ",end="")
             print ("|")
 
 
-    def get (self,x,y):
-        return self.board[x][y]
-
     def altIsAvailable(self,x,y,color):
-        if not self.board[x][y] == self.empty:
+
+        if not self.isEmpty(x,y):
             return False
 
-        if x < 6 and self.board[x + 1][y] == self.reverse(color):
+        if x < 6 and self.get(x + 1,y) == self.reverse(color):
             for e in range(2, 8 - x):
-                if self.board[x + e][y] == self.reverse(color):
+                if self.get(x + e,y) == self.reverse(color):
                     continue
-                elif self.board[x + e][y] == color:
+                elif self.get(x + e,y) == color:
                     return True
                 else:
                     break
 
-        if x > 1 and self.board[x - 1][y] == self.reverse(color):
+        if x > 1 and self.get(x - 1,y) == self.reverse(color):
             for e in range(2, x + 1):
-                if self.board[x - e][y] == self.reverse(color):
+                if self.get(x - e,y) == self.reverse(color):
                     continue
-                elif self.board[x - e][y] == color:
+                elif self.get(x - e,y) == color:
                     return True
                 else:
                     break
 
-        if y < 6 and self.board[x][y + 1] == self.reverse(color):
+        if y < 6 and self.get(x,y + 1) == self.reverse(color):
             for e in range(2, 8 - y):
-                if self.board[x][y + e] == self.reverse(color):
+                if self.get(x,y + e) == self.reverse(color):
                     continue
-                elif self.board[x][y + e] == color:
+                elif self.get(x,y + e) == color:
                     return True
                 else:
                     break
 
-        if y > 1 and self.board[x][y - 1] == self.reverse(color):
+        if y > 1 and self.get(x,y - 1) == self.reverse(color):
             for e in range(2, y + 1):
-                if self.board[x][y - e] == self.reverse(color):
+                if self.get(x,y - e) == self.reverse(color):
                     continue
-                elif self.board[x][y - e] == color:
+                elif self.get(x,y - e) == color:
                     return True
                 else:
                     break
 
         minValue = min(7 - x,7 - y)
-        if minValue > 1 and self.board[x + 1][y + 1] == self.reverse(color):
+        if minValue > 1 and self.get(x + 1,y + 1) == self.reverse(color):
             for e in range(2, minValue + 1):
-                if self.board[x + e][y + e] == self.reverse(color):
+                if self.get(x + e,y + e) == self.reverse(color):
                     continue
-                elif self.board[x + e][y + e] == color:
+                elif self.get(x + e,y + e) == color:
                     return True
                 else:
                     break
 
         minValue = min(7 - x,y)
-        if minValue > 1 and self.board[x + 1][y - 1] == self.reverse(color):
+        if minValue > 1 and self.get(x + 1,y - 1) == self.reverse(color):
             for e in range(2, minValue + 1):
-                if self.board[x + e][y - e] == self.reverse(color):
+                if self.get(x + e,y - e) == self.reverse(color):
                     continue
-                elif self.board[x + e][y - e] == color:
+                elif self.get(x + e,y - e) == color:
                     return True
                 else:
                     break
 
         minValue = min(x,y)
-        if minValue > 1 and self.board[x - 1][y - 1] == self.reverse(color):
+        if minValue > 1 and self.get(x - 1,y - 1) == self.reverse(color):
             for e in range(2, minValue + 1):
-                if self.board[x - e][y - e] == self.reverse(color):
+                if self.get(x - e,y - e) == self.reverse(color):
                     continue
-                elif self.board[x - e][y - e] == color:
+                elif self.get(x - e,y - e) == color:
                     return True
                 else:
                     break
 
         minValue = min(x,7 - y)
-        if minValue > 1 and self.board[x - 1][y + 1] == self.reverse(color):
+        if minValue > 1 and self.get(x - 1,y + 1) == self.reverse(color):
             for e in range(2, minValue + 1):
-                if self.board[x - e][y + e] == self.reverse(color):
+                if self.get(x - e,y + e) == self.reverse(color):
                     continue
-                elif self.board[x - e][y + e] == color:
+                elif self.get(x - e,y + e) == color:
                     return True
                 else:
                     break
@@ -133,7 +140,7 @@ class Board:
 
     def isAvailable(self,x,y,color):
         
-        if not self.board[x][y] == self.empty:
+        if not self.isEmpty(x,y):
             return False
         
         for xi in range(x + 1,8):
@@ -275,17 +282,17 @@ class Board:
         else:
             print (f'●:put{x},{y}')
 
-    def put(self,pos,color):
+    def putNext(self,pos,color):
         x,y = pos
         if self.isAvailable(x,y,color):
-            self.board[x][y] = color
+            self.put(x,y,color)
 #            self.printRecord(x,y,color)
             for i in range(x+1,8):
                 if self.get(i,y) == self.reverse(color):
                     continue
                 elif self.get(i,y) == color:
                     for ii in range(x+1,i):
-                        self.board[ii][y]=color
+                        self.put(ii,y,color)
                     break
                 else:
                     break
@@ -295,7 +302,7 @@ class Board:
                     continue
                 elif self.get(i,y) == color:
                     for ii in range(x-1,i-1,-1):
-                        self.board[ii][y]=color
+                        self.put(ii,y,color)
                     break
                 else:
                     break
@@ -305,7 +312,7 @@ class Board:
                     continue
                 elif self.get(x,i) == color:
                     for ii in range(y+1,i):
-                        self.board[x][ii]=color
+                        self.put(x,ii,color)
                     break
                 else:
                     break
@@ -315,7 +322,7 @@ class Board:
                     continue
                 elif self.get(x,i) == color:
                     for ii in range(y-1,i-1,-1):
-                        self.board[x][ii]=color
+                        self.put(x,ii,color)
                     break
                 else:
                     break
@@ -326,7 +333,7 @@ class Board:
                     continue
                 elif self.get(x + i,y + i) == color:
                     for ii in range(1, i):
-                        self.board[x + ii][y + ii]=color
+                        self.put(x + ii,y + ii,color)
                         break
                 else:
                     break
@@ -337,7 +344,7 @@ class Board:
                     continue
                 elif self.get(x + i,y - i) == color:
                     for ii in range(1, i):
-                        self.board[x + ii][y - ii]=color
+                        self.put(x + ii,y - ii,color)
                         break
                 else:
                     break
@@ -348,7 +355,7 @@ class Board:
                     continue
                 elif self.get(x - i,y - i) == color:
                     for ii in range(1, i):
-                        self.board[x - ii][y - ii]=color
+                        self.put(x - ii,y - ii,color)
                         break
                 else:
                     break
@@ -359,7 +366,7 @@ class Board:
                     continue
                 elif self.get(x - i,y + i) == color:
                     for ii in range(1, i):
-                        self.board[x - ii][y + ii]=color
+                        self.put(x - ii,y + ii,color)
                         break
                 else:
                     break
@@ -376,9 +383,9 @@ class Board:
         black = 0
         for x in range(0,8):
             for y in range(0,8):
-                if self.board[x][y]==self.black:
+                if self.get(x,y)==self.black:
                     black += 1
-                elif self.board[x][y]==self.white:
+                elif self.get(x,y)==self.white:
                     white += 1
         return black,white
 

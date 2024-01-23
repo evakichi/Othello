@@ -37,7 +37,7 @@ def battle(mainBoard,blackPlayer,whitePlayer,queue,count,print_board=False):
 
             if not li == None:
                 x,y = blackPlayer.getNext(mainBoard,currentColor)
-                mainBoard.put((x,y),currentColor)
+                mainBoard.putNext((x,y),currentColor)
                 record.record((x,y),currentColor)
                 if print_board:
                     print (f'● : put ({x},{y})')
@@ -45,10 +45,19 @@ def battle(mainBoard,blackPlayer,whitePlayer,queue,count,print_board=False):
                 if print_board:
                     print (f'● : pass!!')
         else:    
+            altStart = time.time()
+            li = mainBoard.altGetNextCandidate(currentColor)
+            altEnd = time.time()
+            altTotal += (altEnd - altStart)
+
+            normalStart = time.time()
             li = mainBoard.getNextCandidate(currentColor)
+            normalEnd = time.time()
+            normalTotal += (normalEnd - normalStart)
+            
             if not li == None:
                 x,y = whitePlayer.getNext(mainBoard,currentColor)
-                mainBoard.put((x,y),currentColor)
+                mainBoard.putNext((x,y),currentColor)
                 record.record((x,y),currentColor)
                 if print_board:
                     print (f'○ : put ({x},{y})')
