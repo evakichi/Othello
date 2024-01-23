@@ -3,11 +3,11 @@ import recorder
 #import pointPlayer
 import randomPlayer
 #import inputPlayer
-
+import time
 import os
 from multiprocessing import Process, Queue
 
-counter = 50
+counter = 1000
 threads = 1
 
 totalBattles = counter * threads
@@ -18,12 +18,23 @@ blackPlayer = randomPlayer.randomPlayer(board.Board.black)
 def battle(mainBoard,blackPlayer,whitePlayer,queue,count,print_board=False):
     currentColor = mainBoard.white
     record = recorder.Recorder()
+    altTotal = 0.0
+    normalTotal = 0.0
     if print_board:
         mainBoard.printBoard()
     while mainBoard.isGameOver(): 
         currentColor = mainBoard.reverse(currentColor)
         if currentColor == mainBoard.black:
+            altStart = time.time()
+            li = mainBoard.altGetNextCandidate(currentColor)
+            altEnd = time.time()
+            altTotal += (altEnd - altStart)
+
+            normalStart = time.time()
             li = mainBoard.getNextCandidate(currentColor)
+            normalEnd = time.time()
+            normalTotal += (normalEnd - normalStart)
+
             if not li == None:
                 x,y = blackPlayer.getNext(mainBoard,currentColor)
                 mainBoard.put((x,y),currentColor)
@@ -48,6 +59,7 @@ def battle(mainBoard,blackPlayer,whitePlayer,queue,count,print_board=False):
             mainBoard.printBoard()
     if print_board:
         mainBoard.printResult()
+    print(f'noemal = {normalTotal}, alt = {altTotal}')
     queue.put(mainBoard.result(count)+(record,))
 
 if __name__ =='__main__':
