@@ -94,8 +94,9 @@ class Board:
         yMax = max(y,8 - y)
         yMin = min(y,8 - y)
 
-        if max(xMin, yMin) < 6 and self.board[x + 1][y + 1] == self.reverse(color):
-            for e in range(2,min(xMax,yMax)):
+        maxValue = max(x,y)
+        if maxValue < 6 and self.board[x + 1][y + 1] == self.reverse(color):
+            for e in range(2, 8 - maxValue):
                 if self.board[x + e][y + e] == self.reverse(color):
                     continue
                 elif self.board[x + e][y + e] == color:
@@ -103,8 +104,9 @@ class Board:
                 else:
                     break
 
-        if max(xMin, yMin) < 6 and self.board[x + 1][y + 1] == self.reverse(color):
-            for e in range(2,min(xMax,yMax)):
+        maxValue = max(x,7 - y)
+        if maxValue < 6 and self.board[x + 1][y + 1] == self.reverse(color):
+            for e in range(2, 8 - maxValue):
                 if self.board[x + e][y + e] == self.reverse(color):
                     continue
                 elif self.board[x + e][y + e] == color:
