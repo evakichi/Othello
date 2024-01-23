@@ -7,35 +7,42 @@ import time
 import os
 from multiprocessing import Process, Queue
 
-counter = 1000
+counter = 1
 threads = 1
 
 totalBattles = counter * threads
 
 whitePlayer = randomPlayer.randomPlayer(board.Board.white)   
+#blackPlayer = randomPlayer.randomPlayer(board.Board.black)   
 blackPlayer = pointPlayer.pointPlayer(board.Board.black)   
 
-blackPlayer.load(2000)
+blackPlayer.load(3000)
 
-def battle(mainBoard,blackPlayer,whitePlayer,queue,count,print_board=False):
+def battle(mainBoard,blackPlayer,whitePlayer,queue,count,pFlag=False):
     currentColor = mainBoard.white
     record = recorder.Recorder()
 
-    if print_board:
+    if pFlag:
         mainBoard.printBoard()
-    while mainBoard.isGameOver(): 
+    while not mainBoard.isGameOver(): 
         currentColor = mainBoard.reverse(currentColor)
         p = None
         if currentColor == mainBoard.black:
             p = blackPlayer.getNext(mainBoard)
-            if print_board:
-                x,y = p
-                print (f'black : put ({x},{y})')
+            if pFlag:
+                if p == None:
+                    print (f'black : Pass!!')                    
+                else:
+                    x,y = p
+                    print (f'black : put ({x},{y})')
         elif currentColor == mainBoard.white:
             p = whitePlayer.getNext(mainBoard)
-            if print_board:
-                x,y = p
-                print (f'white : put ({x},{y})')
+            if pFlag:
+                if p == None:
+                    print (f'white : Pass!!')                    
+                else:
+                    x,y = p
+                    print (f'white : put ({x},{y})')
                 
         if p != None:
             if not mainBoard.isAvailable(p,currentColor):
@@ -43,16 +50,16 @@ def battle(mainBoard,blackPlayer,whitePlayer,queue,count,print_board=False):
             mainBoard.putNext(p,currentColor)
             record.record(p,currentColor)
         else:
-            if print_board:
+            if pFlag:
                 if currentColor == mainBoard.black:
                     print (f'black : pass!!')
                 elif currentColor == mainBoard.white:
                     print (f'white : pass!!')
 
-        if print_board:        
+        if pFlag:        
             mainBoard.printBoard()
 
-    if print_board:
+    if pFlag:
         mainBoard.printResult(count)
 
     queue.put(mainBoard.result(count)+(record,))
@@ -66,7 +73,7 @@ if __name__ =='__main__':
         for t in range(threads):
             mainBoards.append(board.Board())
             queue.append(Queue())
-            processes.append(Process(target=battle,args=(mainBoards[t],blackPlayer,whitePlayer,queue[t],threads*count+t,False)))
+            processes.append(Process(target=battle,args=(mainBoards[t],blackPlayer,whitePlayer,queue[t],threads*count+t,True)))
         for t in range(threads):
             processes[t].start()
         for t in range(threads):
@@ -81,8 +88,8 @@ if __name__ =='__main__':
             #randomPlayerRecorder.setResult(black,white,record.getResult())
 #    record.printRetsult()
 #    randomPlayerRecorder.setCount(counter*threads)
-    blackPlayer.printPoint()
-    whitePlayer.printPoint()
+#    blackPlayer.printPoint()
+#    whitePlayer.printPoint()
     blackPlayer.printWinCount()
     whitePlayer.printWinCount()
     blackPlayer.save(totalBattles)
