@@ -8,8 +8,10 @@ import os
 import sys
 from multiprocessing import Process, Queue
 
-counter = 100
+counter = 1
 threads = 1
+printFlag = True
+debugFlag = False
 
 totalBattles = counter * threads
 
@@ -18,8 +20,9 @@ whitePlayer = randomPlayer.randomPlayer(board.Board.white)
 blackPlayer = pointPlayer.pointPlayer(board.Board.black)   
 
 blackPlayer.load(2000)
+blackPlayer.setMaxDepth(3)
 
-def battle(mainBoard,blackPlayer,whitePlayer,queue,count,pFlag=False):
+def battle(mainBoard,blackPlayer,whitePlayer,queue,count,pFlag=False,dFlag=False):
     currentColor = mainBoard.white
     record = recorder.Recorder()
 
@@ -29,7 +32,7 @@ def battle(mainBoard,blackPlayer,whitePlayer,queue,count,pFlag=False):
         currentColor = mainBoard.reverse(currentColor)
         pos = None
         if currentColor == mainBoard.black:
-            pos = blackPlayer.getNext(mainBoard,pFlag)
+            pos = blackPlayer.getNext(mainBoard,pFlag,dFlag)
             if pFlag:
                 if pos == None:
                     print (f'black : Pass!!')                    
@@ -37,7 +40,7 @@ def battle(mainBoard,blackPlayer,whitePlayer,queue,count,pFlag=False):
                     x,y = pos
                     print (f'black : put ({x},{y})')
         elif currentColor == mainBoard.white:
-            pos = whitePlayer.getNext(mainBoard,pFlag)
+            pos = whitePlayer.getNext(mainBoard,pFlag,dFlag)
             if pFlag:
                 if pos == None:
                     print (f'white : Pass!!')                    
@@ -74,7 +77,7 @@ if __name__ =='__main__':
         for t in range(threads):
             mainBoards.append(board.Board())
             queue.append(Queue())
-            processes.append(Process(target=battle,args=(mainBoards[t],blackPlayer,whitePlayer,queue[t],threads*count+t,False)))
+            processes.append(Process(target=battle,args=(mainBoards[t],blackPlayer,whitePlayer,queue[t],threads*count+t,printFlag,debugFlag)))
         for t in range(threads):
             processes[t].start()
         for t in range(threads):

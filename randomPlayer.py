@@ -11,7 +11,7 @@ class randomPlayer(player.player):
         super().__init__(color)
         self.ownPoint = np.zeros((8,8))
 
-    def getNext(self,currentBoard,pFlag=False):
+    def getNext(self,currentBoard,pFlag=False,dFlag=False):
         candidateList = currentBoard.getNextCandidate(self.ownColor)
         if candidateList == None:
             return None

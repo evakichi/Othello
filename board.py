@@ -26,9 +26,21 @@ class Board:
                 b.put(x,y,self.get(x,y))
         return b
 
+    def copyNextPass(self,color):
+        c = self.copy()
+        c.setNextPos(None)
+        c.setNextColor(color)
+        return c
+
     def reverse(self,color):
         return -1*color
     
+    def setNextPos(self,pos):
+        self.nextPos = pos
+
+    def setNextColor(self,color):
+        self.nextColor = color
+
     def getColorString(color):
         if color == Board.black:
             return 'B'
@@ -299,15 +311,15 @@ class Board:
         c.putNext(p,color)
         return c
 
-    def putNext(self,n,nextColor):
+    def putNext(self,nextPos,nextColor):
 
-        if n == None:
+        if nextPos == None:
             return False
+        
+        self.setNextPos(nextPos)
+        self.setNextColor(nextColor)
 
-        self.nextPos = n
-        self.nextColor = nextColor
-
-        x,y = n
+        x,y = nextPos
 
         if not self.isEmpty(x,y):
             return False
