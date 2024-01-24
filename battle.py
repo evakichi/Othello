@@ -9,7 +9,7 @@ import sys
 from multiprocessing import Process, Queue
 
 counter = 100
-threads = 20
+threads = 1
 
 totalBattles = counter * threads
 
@@ -17,7 +17,7 @@ whitePlayer = randomPlayer.randomPlayer(board.Board.white)
 #blackPlayer = randomPlayer.randomPlayer(board.Board.black)   
 blackPlayer = pointPlayer.pointPlayer(board.Board.black)   
 
-blackPlayer.load(3000)
+blackPlayer.load(2000)
 
 def battle(mainBoard,blackPlayer,whitePlayer,queue,count,pFlag=False):
     currentColor = mainBoard.white
@@ -27,29 +27,29 @@ def battle(mainBoard,blackPlayer,whitePlayer,queue,count,pFlag=False):
         mainBoard.printBoard()
     while not mainBoard.isGameOver(): 
         currentColor = mainBoard.reverse(currentColor)
-        p = None
+        pos = None
         if currentColor == mainBoard.black:
-            p = blackPlayer.getNext(mainBoard)
+            pos = blackPlayer.getNext(mainBoard,pFlag)
             if pFlag:
-                if p == None:
+                if pos == None:
                     print (f'black : Pass!!')                    
                 else:
-                    x,y = p
+                    x,y = pos
                     print (f'black : put ({x},{y})')
         elif currentColor == mainBoard.white:
-            p = whitePlayer.getNext(mainBoard)
+            pos = whitePlayer.getNext(mainBoard,pFlag)
             if pFlag:
-                if p == None:
+                if pos == None:
                     print (f'white : Pass!!')                    
                 else:
-                    x,y = p
+                    x,y = pos
                     print (f'white : put ({x},{y})')
                 
-        if p != None:
-            if not mainBoard.isAvailable(p,currentColor):
+        if pos != None:
+            if not mainBoard.isAvailable(pos,currentColor):
                 print("Vioration")
-            mainBoard.putNext(p,currentColor)
-            record.record(p,currentColor)
+            mainBoard.putNext(pos,currentColor)
+            record.record(pos,currentColor)
         else:
             if pFlag:
                 if currentColor == mainBoard.black:
@@ -60,8 +60,8 @@ def battle(mainBoard,blackPlayer,whitePlayer,queue,count,pFlag=False):
         if pFlag:        
             mainBoard.printBoard()
 
-    if pFlag:
-        mainBoard.printResult(count)
+#    if pFlag:
+    mainBoard.printResult(count)
 
     queue.put(mainBoard.result(count)+(record,))
 

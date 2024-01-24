@@ -54,78 +54,127 @@ class pointPlayer(player.player):
         x,y = position
         return self.oppPoints[x,y]
 
-    def nodePoint(self,currentBoard):
+    def termiateEvaluate(self,currentBoard,pFlag=False):
+        color = currentBoard.getNextColor()
+        black,white = currentBoard.result(0)
+        if color == currentBoard.black: 
+            if black > white:
+                return 1.0
+            if white > black:
+                return -1.0
+            else:
+                return 0.0
+        if color == currentBoard.white: 
+            if black < white:
+                return 1.0
+            if white < black:
+                return -1.0
+            else:
+                return 0.0
+
+    def normalEvaluate(self,currentBoard,pFlag=False):
         pos = currentBoard.getNextPos()
         if currentBoard.getNextColor() == self.ownColor:
             return self.getOwnPoint(pos)
         else:
             return self.getOppPoint(pos)
-
-    def minMax(self,currentBoard,maxDepth,currentDepth,p,color):
+    
+    def minSelect(self,currentBoard,depth,position,color,pFlag=False):
 
         nextCandidate = currentBoard.getNextCandidate(color)
+        pos,point = None,sys.float_info.max
 
-        if currentDepth == 0 and nextCandidate == None:
-            return None
-        
-        if currentDepth == 0:
-            maxPos = nextCandidate[0]
-            nextBoard = currentBoard.copyAndNext(maxPos,color)
-            maxPoint = self.nodePoint(nextBoard)
-            for nc in nextCandidate:
-                nextBoard = currentBoard.copyAndNext(nc,color)
-                mm = self.minMax(nextBoard,maxDepth,currentDepth + 1,nc,color)
-                if mm != None and mm[1] > maxPoint:
-                    maxPos,maxPoint = mm      
-            return maxPos,maxPoint
+        if nextCandidate == None:        
+            if pFlag:
+                print (f'{depth}:{board.Board.getColorString(color)}:return minSelect:{position}:{self.termiateEvaluate(currentBoard)}\n')
+            return position,self.termiateEvaluate(currentBoard,pFlag)
 
-        if currentDepth == maxDepth:
-            return p,self.nodePoint(currentBoard)
-
-        if currentBoard.isGameOver():
-            black,white = currentBoard.result(0)
-            if color == currentBoard.black: 
-                if black > white:
-                    return p,1.0
-                if white > black:
-                    return p,-1.0
-                else:
-                    return p,0.0
-            if color == currentBoard.white: 
-                if black < white:
-                    return p,1.0
-                if white < black:
-                    return p,-1.0
-                else:
-                    return p,0.0
-
-        pos = (-1,-1)
-        point = sys.float_info.max
-
-        if nextCandidate != None:
-            nextBoard = currentBoard.copyAndNext(nextCandidate[0],color)
-            pos,point = (nextCandidate[0],self.nodePoint(nextBoard))
-        else:
-            if color == self.ownColor:
-                point = -1 * point
-
-        if nextCandidate != None:
-            for nc in nextCandidate:
-                nextBoard = currentBoard.copyAndNext(nc,color)
-                mm = self.minMax(nextBoard,maxDepth,currentDepth + 1,p,color * -1)
-                if mm != None and color == self.ownColor and mm[1] > point:
-                    pos,point = mm
-                if mm != None and color != self.ownColor and mm[1] < point:
-                    pos,point = mm
+        if depth == 0:
+            for i,nc in enumerate(nextCandidate):
+                v = self.normalEvaluate(currentBoard.copyAndNext(nc,color),pFlag)
+                if pFlag:
+                    print (f'{depth}:{board.Board.getColorString(color)}:minSelect:{position}:{nc}:{v}')
+                if i == 0  or v < point:
+                    pos,point = position,v
+            if pFlag:
+                print (f'{depth}:{board.Board.getColorString(color)}:return minSelect:{position}:{point}\n')
             return pos,point
-        return p,point
 
+        for i,nc in enumerate(nextCandidate):
+            position,v = self.maxSelect(currentBoard.copyAndNext(nc,color),depth -1,position,-color,pFlag)
+            if pFlag:
+                print (f'{depth}:{board.Board.getColorString(color)}:minSelect:{position}:{v}')
+            if i == 0 or point > v:
+                pos,point = position,v
+        if pFlag:
+            print (f'{depth}:{board.Board.getColorString(color)}:return minSelect:{pos}:{point}\n')
+        return position,point
 
-    def getNext(self,currentBoard):
-        m = self.minMax(currentBoard,1,0,(-1,-1),self.ownColor)
-        if m == None:
+    
+    def maxSelect(self,currentBoard,depth,position,color,pFlag=False):
+
+        nextCandidate = currentBoard.getNextCandidate(color)
+        pos,point = None,-sys.float_info.max
+
+        if nextCandidate == None:        
+            if pFlag:
+                print (f'{depth}:{board.Board.getColorString(color)}:return maxSelect:{position}:{self.termiateEvaluate(currentBoard)}\n')
+            return position,self.termiateEvaluate(currentBoard)
+            
+        if depth == 0:
+            for i,nc in enumerate(nextCandidate):
+                v = self.normalEvaluate(currentBoard.copyAndNext(nc,color),pFlag)
+                if pFlag:
+                    print (f'{depth}:{board.Board.getColorString(color)}:maxSelect:{position}:{nc}:{v}')
+                if i == 0  or v > point:
+                    pos,point = position,v
+            if pFlag:
+                print (f'{depth}:{board.Board.getColorString(color)}:return maxSelect:{pos}:{point}\n')
+            return pos,point
+
+        for i,nc in enumerate(nextCandidate):
+            p,v = self.minSelect(currentBoard.copyAndNext(nc,color),depth -1,position,-color,pFlag)
+            if pFlag:
+                print (f'{depth}:{board.Board.getColorString(color)}:maxSelect:{p}:{v}')
+            if i == 0 or point < v:
+                pos,point = p,v            
+        print (f'{depth}:{board.Board.getColorString(color)}:return maxSelect:{pos}:{point}\n')
+        return position,point
+
+    def minMax(self,currentBoard,depth,color,pFlag=False):
+        nextCandidate = currentBoard.getNextCandidate(color)
+        pos,point = None,-sys.float_info.max
+
+        if nextCandidate == None:
             return None
-        return m[0]
+            
+        if depth == 0:
+            for i,nc in enumerate(nextCandidate):
+                v = self.normalEvaluate(currentBoard.copyAndNext(nc,color),pFlag)
+                if pFlag:
+                    print (f'{depth}:{board.Board.getColorString(color)}:minMax:{nc}:{v}')
+                if i == 0  or v > point:
+                    pos,point = nc,v
+            if pFlag:
+                print (f'{depth}:{board.Board.getColorString(color)}:return minMax:{pos}:{point}\n')
+            return pos
+
+        if nextCandidate != None:
+            for i,nc in enumerate(nextCandidate):
+                p,v = self.minSelect(currentBoard.copyAndNext(nc,color),depth -1,nc,-color,pFlag)
+                if i == 0 or v > point:
+                    pos,point = (p,v)
+        if pFlag:
+            print (f'{depth}:{board.Board.getColorString(color)}:return minMax:{pos}:{point}\n')
+        return pos
+    
+    def getNext(self,currentBoard,pFlag=False):
+        pos = self.minMax(currentBoard,2,self.ownColor,pFlag)
+        if pFlag:
+            print("\n\n\n\n\n\n\n\n")
+        if pos == None:
+            return None
+        return pos
 
     def setResult(self,black,white,record):
         if self.ownColor == board.Board.black and black > white:
