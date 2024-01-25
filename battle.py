@@ -16,11 +16,11 @@ debugFlag = False
 totalBattles = counter * threads
 
 whitePlayer = randomPlayer.randomPlayer(board.Board.white)   
-#blackPlayer = randomPlayer.randomPlayer(board.Board.black)   
-blackPlayer = pointPlayer.pointPlayer(board.Board.black)   
+blackPlayer = randomPlayer.randomPlayer(board.Board.black)   
+#blackPlayer = pointPlayer.pointPlayer(board.Board.black)   
 
-blackPlayer.load(2000)
-blackPlayer.setMaxDepth(3)
+#blackPlayer.load(2000)
+#blackPlayer.setMaxDepth(3)
 
 def battle(mainBoard,blackPlayer,whitePlayer,queue,count,pFlag=False,dFlag=False):
     currentColor = mainBoard.white
